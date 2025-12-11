@@ -26,8 +26,8 @@ export default function TransformerControls(props: TransformerControls) {
     const cursor = {
       TOP_LEFT: 'url("/resize-nw.png") 20 20, auto',
       TOP_RIGHT: 'url("/resize-ne.png") 20 20, auto',
-      BOTTOM_RIGHT: 'url("/resize-ne.png") 20 20, auto',
-      BOTTOM_LEFT: 'url("/resize-nw.png") 20 20, auto',
+      BOTTOM_RIGHT: 'url("/resize-nw.png") 20 20, auto',
+      BOTTOM_LEFT: 'url("/resize-ne.png") 20 20, auto',
     };
 
     document.body.style.cursor = cursor[position];
@@ -85,6 +85,7 @@ export default function TransformerControls(props: TransformerControls) {
         stroke={PRIMARY_COLOR}
         strokeWidth={LINE_WIDTH}
       />
+      {/* Top Left */}
       <Group>
         <Rect
           name='TopLeftCtl_Rotate'
@@ -108,6 +109,87 @@ export default function TransformerControls(props: TransformerControls) {
           stroke={PRIMARY_COLOR}
           strokeWidth={1}
           onPointerEnter={(e) => enterScale(e, 'TOP_LEFT')}
+          onPointerLeave={leaveControl}
+        />
+      </Group>
+      {/* Top Right */}
+      <Group>
+        <Rect
+          name='TopRightCtl_Rotate'
+          fill='white'
+          x={props.size.width}
+          y={-16}
+          width={16}
+          height={16}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterRotate(e, 'TOP_RIGHT')}
+          onPointerLeave={leaveControl}
+        />
+        <Rect
+          name='TopRightCtl_Scale'
+          fill='red'
+          x={props.size.width - 4.5}
+          y={-4.5}
+          width={8}
+          height={8}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterScale(e, 'TOP_RIGHT')}
+          onPointerLeave={leaveControl}
+        />
+      </Group>
+      {/* Bottom Right */}
+      <Group>
+        <Rect
+          name='BottomRightCtl_Rotate'
+          fill='white'
+          x={props.size.width}
+          y={props.size.height}
+          width={16}
+          height={16}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterRotate(e, 'BOTTOM_RIGHT')}
+          onPointerLeave={leaveControl}
+        />
+        <Rect
+          name='BottomRightCtl_Scale'
+          fill='red'
+          x={props.size.width - 4.5}
+          y={props.size.height - 4.5}
+          width={8}
+          height={8}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterScale(e, 'BOTTOM_RIGHT')}
+          onPointerLeave={leaveControl}
+        />
+      </Group>
+      {/* Bottom Left */}
+      <Group>
+        <Rect
+          name='BottomLeftCtl_Rotate'
+          fill='white'
+          x={-16}
+          y={props.size.height}
+          width={16}
+          height={16}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterRotate(e, 'BOTTOM_LEFT')}
+          onPointerLeave={leaveControl}
+        />
+        <Rect
+          name='BottomLeftCtl_Scale'
+          fill='red'
+          x={-4.5}
+          y={props.size.height - 4.5}
+          width={8}
+          height={8}
+          stroke={PRIMARY_COLOR}
+          strokeWidth={1}
+          onPointerEnter={(e) => enterScale(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
         />
       </Group>
