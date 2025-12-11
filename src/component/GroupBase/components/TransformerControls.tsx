@@ -88,7 +88,7 @@ export default function TransformerControls(props: TransformerControls) {
       TOP_LEFT: { x: 0, y: 0, up: -1, left: -1 },
       TOP_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
       BOTTOM_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
-      BOTTOM_LEFT: { x: 0, y: -props.size.height, up: 1, left: -1 },
+      BOTTOM_LEFT: { x: 0, y: -1, up: 1, left: -1 },
     };
 
     const coord = {
@@ -106,8 +106,6 @@ export default function TransformerControls(props: TransformerControls) {
       y: coord.y,
     };
 
-    console.log(amount);
-
     props.onResize?.call(
       {},
       {
@@ -116,11 +114,16 @@ export default function TransformerControls(props: TransformerControls) {
       }
     );
 
+    const newPosition = { x: 0, y: 0 };
+
+    newPosition.y = newPosition.y = props.size.height + amount.y * corner[position].up;
+    newPosition.y *= corner[position].y;
+
     props.onUpdatePosition?.call(
       {},
       {
         x: coord.x + corner[position].x,
-        y: coord.y + corner[position].y,
+        y: coord.y + newPosition.y,
       }
     );
   }
