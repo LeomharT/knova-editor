@@ -5,11 +5,6 @@ import { useBearStore } from '../../hooks/useBearStore';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 
-const GROUPS = {
-  TRANSFORMED_GROUP: 'TRANSFORMED_GROUP',
-  SIZE_TOOLTIP: 'SIZE_TOOLTIP',
-};
-
 export default function GroupBase() {
   const id = useId();
 
@@ -20,7 +15,7 @@ export default function GroupBase() {
 
   const [isHover, setHover] = useState(false);
 
-  const [position, setPosition] = useState({ x: 0, y: 20 });
+  const [position, setPosition] = useState({ x: 50, y: 50 });
 
   const [size] = useState({ width: 200, height: 200 });
 
@@ -36,21 +31,20 @@ export default function GroupBase() {
     setHover(false);
   }
 
-  function handleOnDragMove() {}
-
-  function handleOnDragEnd(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
+  function handleOnDragMove(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
     setPosition({
       x: e.target.x(),
       y: e.target.y(),
     });
+  }
 
+  function handleOnDragEnd() {
     setSelected([id]);
   }
 
   function handleOnSelect(e: KonvaEventObject<PointerEvent>) {
     e.evt.stopPropagation();
 
-    const id = e.target.parent?.id() ?? '1';
     setSelected([id]);
   }
 
@@ -77,15 +71,13 @@ export default function GroupBase() {
   }, []);
 
   return (
-    <Group
-      draggable
-      x={position.x}
-      y={position.y}
-      onDragEnd={handleOnDragEnd}
-      onDragMove={handleOnDragMove}
-    >
+    <Group id={id}>
       <Group
-        id={id}
+        draggable
+        x={position.x}
+        y={position.y}
+        onDragEnd={handleOnDragEnd}
+        onDragMove={handleOnDragMove}
         onPointerEnter={handleOnPointerEnter}
         onPointerLeave={handleOnPointerLeave}
         onPointerClick={handleOnSelect}
@@ -98,10 +90,20 @@ export default function GroupBase() {
           visible={isHover}
           strokeWidth={4}
         />
-        <TransformerControls size={size} points={outlinePoints} visible={isSelected} />
         <Rect width={size.width} height={size.height} fill='#ffd6e7' />
       </Group>
-      <Group name={GROUPS.SIZE_TOOLTIP} y={size.height + 5} visible={isSelected}>
+      <TransformerControls
+        size={size}
+        position={position}
+        points={outlinePoints}
+        visible={isSelected}
+      />
+      <Group
+        name={'SIZE_TOOLTIP'}
+        x={position.x}
+        y={position.y + size.height + 5}
+        visible={isSelected}
+      >
         <Rect ref={textRect} fill={PRIMARY_COLOR} cornerRadius={[4, 4, 4, 4]} />
         <Text
           ref={textRef}
