@@ -86,8 +86,8 @@ export default function TransformerControls(props: TransformerControls) {
 
     const corner = {
       TOP_LEFT: { x: 0, y: 0, up: -1, left: -1 },
-      TOP_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
-      BOTTOM_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
+      TOP_RIGHT: { x: -1, y: 0, up: -1, left: 1 },
+      BOTTOM_RIGHT: { x: -1, y: -1, up: 1, left: 1 },
       BOTTOM_LEFT: { x: 0, y: -1, up: 1, left: -1 },
     };
 
@@ -116,13 +116,16 @@ export default function TransformerControls(props: TransformerControls) {
 
     const newPosition = { x: 0, y: 0 };
 
-    newPosition.y = newPosition.y = props.size.height + amount.y * corner[position].up;
+    newPosition.x = props.size.width + amount.x * corner[position].left;
+    newPosition.x *= corner[position].x;
+
+    newPosition.y = props.size.height + amount.y * corner[position].up;
     newPosition.y *= corner[position].y;
 
     props.onUpdatePosition?.call(
       {},
       {
-        x: coord.x + corner[position].x,
+        x: coord.x + newPosition.x,
         y: coord.y + newPosition.y,
       }
     );
@@ -218,6 +221,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterScale(e, 'TOP_RIGHT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onResizeStart}
+          onPointerUp={onResizeEnd}
+          onPointerMove={(e) => resizeRect(e, 'TOP_RIGHT')}
         />
       </Group>
       {/* Bottom Right */}
@@ -245,6 +251,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_RIGHT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onResizeStart}
+          onPointerUp={onResizeEnd}
+          onPointerMove={(e) => resizeRect(e, 'BOTTOM_RIGHT')}
         />
       </Group>
       {/* Bottom Left */}
