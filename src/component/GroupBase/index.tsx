@@ -4,6 +4,7 @@ import { Group, Line, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
+import type { GroupBaseSize } from './tpye';
 
 export default function GroupBase() {
   const id = useId();
@@ -17,7 +18,7 @@ export default function GroupBase() {
 
   const [position, setPosition] = useState({ x: 50, y: 50 });
 
-  const [size] = useState({ width: 200, height: 200 });
+  const [size, setSize] = useState({ width: 200, height: 200 });
 
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
@@ -46,6 +47,12 @@ export default function GroupBase() {
     e.evt.stopPropagation();
 
     setSelected([id]);
+  }
+
+  function handleOnResize(size: GroupBaseSize) {
+    setSize(size);
+
+    setupTooltip();
   }
 
   function setupTooltip() {
@@ -97,6 +104,7 @@ export default function GroupBase() {
         position={position}
         points={outlinePoints}
         visible={isSelected}
+        onResize={handleOnResize}
       />
       <Group
         name={'SIZE_TOOLTIP'}
@@ -112,7 +120,7 @@ export default function GroupBase() {
           fontSize={12}
           align='center'
           fill='#ffffff'
-          text={`${size.width.toString()} x ${size.height.toString()}`}
+          text={`${Math.round(size.width)} x ${Math.round(size.height)}`}
         />
       </Group>
     </Group>

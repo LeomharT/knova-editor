@@ -1,5 +1,6 @@
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useControls } from 'leva';
+import { useRef } from 'react';
 import { Group, Line, Rect } from 'react-konva';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
@@ -9,13 +10,10 @@ type TransformerControls = {
   position: GroupBasePosition;
   points: number[];
   visible?: boolean;
+  onResize?: (size: GroupBaseSize) => void;
 };
 
 export default function TransformerControls(props: TransformerControls) {
-  const { debugControls } = useControls({
-    debugControls: true,
-  });
-
   const LINE_WIDTH = 1;
 
   const CORNERS = {
@@ -24,6 +22,17 @@ export default function TransformerControls(props: TransformerControls) {
     BOTTOM_RIGHT: [props.size.width, props.size.height],
     BOTTOM_LEFT: [0, props.size.height],
   };
+
+  const enableResize = useRef(false);
+
+  const prevCoord = useRef({
+    x: 0,
+    y: 0,
+  });
+
+  const { debugControls } = useControls({
+    debugControls: true,
+  });
 
   function enterScale(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
     e.evt.stopPropagation();
@@ -53,6 +62,49 @@ export default function TransformerControls(props: TransformerControls) {
 
   function leaveControl() {
     document.body.style.cursor = 'default';
+  }
+
+  function onResizeStart(e: KonvaEventObject<PointerEvent>) {
+    enableResize.current = true;
+
+    const canvas = e.target;
+    canvas.setPointerCapture(e.evt.pointerId);
+
+    prevCoord.current = {
+      x: e.evt.clientX,
+      y: e.evt.clientY,
+    };
+  }
+
+  function onResizeEnd() {
+    enableResize.current = false;
+  }
+
+  function resizeRect(e: KonvaEventObject<PointerEvent>) {
+    if (!enableResize.current) return;
+
+    const coord = {
+      x: e.evt.clientX,
+      y: e.evt.clientY,
+    };
+
+    const amount = {
+      x: coord.x - prevCoord.current.x,
+      y: coord.y - prevCoord.current.y,
+    };
+
+    prevCoord.current = {
+      x: coord.x,
+      y: coord.y,
+    };
+
+    props.onResize?.call(
+      {},
+      {
+        width: props.size.width + amount.x,
+        height: props.size.height + amount.y,
+      }
+    );
   }
 
   return (
@@ -115,6 +167,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterScale(e, 'TOP_LEFT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onResizeStart}
+          onPointerUp={onResizeEnd}
+          onPointerMove={resizeRect}
         />
       </Group>
       {/* Top Right */}
