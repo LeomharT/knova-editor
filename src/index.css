@@ -1,0 +1,9 @@
+/* include blueprint-icons.css for icon font support */
+/* @import url("@blueprintjs/core/lib/css/blueprint.css"); */
+/* @import url("@blueprintjs/icons/lib/css/blueprint-icons.css"); */
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
