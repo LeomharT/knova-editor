@@ -1,10 +1,11 @@
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
+import { useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Line, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
-import type { GroupBaseSize } from './tpye';
+import type { GroupBasePosition, GroupBaseSize } from './tpye';
 
 export default function GroupBase() {
   const id = useId();
@@ -23,6 +24,10 @@ export default function GroupBase() {
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
   const isSelected = selected.includes(id);
+
+  const { fillRectColor } = useControls({
+    fillRectColor: '#ffd6e7',
+  });
 
   function handleOnPointerEnter() {
     setHover(true);
@@ -51,6 +56,12 @@ export default function GroupBase() {
 
   function handleOnResize(size: GroupBaseSize) {
     setSize(size);
+
+    setupTooltip();
+  }
+
+  function handleOnUpdatePosition(position: GroupBasePosition) {
+    setPosition(position);
 
     setupTooltip();
   }
@@ -97,7 +108,7 @@ export default function GroupBase() {
           visible={isHover}
           strokeWidth={4}
         />
-        <Rect width={size.width} height={size.height} fill='#ffd6e7' />
+        <Rect width={size.width} height={size.height} fill={fillRectColor} />
       </Group>
       <TransformerControls
         size={size}
@@ -105,6 +116,7 @@ export default function GroupBase() {
         points={outlinePoints}
         visible={isSelected}
         onResize={handleOnResize}
+        onUpdatePosition={handleOnUpdatePosition}
       />
       <Group
         name={'SIZE_TOOLTIP'}

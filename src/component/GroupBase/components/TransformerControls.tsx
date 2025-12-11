@@ -11,6 +11,7 @@ type TransformerControls = {
   points: number[];
   visible?: boolean;
   onResize?: (size: GroupBaseSize) => void;
+  onUpdatePosition?: (position: GroupBasePosition) => void;
 };
 
 export default function TransformerControls(props: TransformerControls) {
@@ -80,8 +81,15 @@ export default function TransformerControls(props: TransformerControls) {
     enableResize.current = false;
   }
 
-  function resizeRect(e: KonvaEventObject<PointerEvent>) {
+  function resizeRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
     if (!enableResize.current) return;
+
+    const corner = {
+      TOP_LEFT: { x: 0, y: 0, up: -1, left: -1 },
+      TOP_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
+      BOTTOM_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
+      BOTTOM_LEFT: { x: 0, y: -props.size.height, up: 1, left: -1 },
+    };
 
     const coord = {
       x: e.evt.clientX,
@@ -98,11 +106,21 @@ export default function TransformerControls(props: TransformerControls) {
       y: coord.y,
     };
 
+    console.log(amount);
+
     props.onResize?.call(
       {},
       {
-        width: props.size.width + amount.x,
-        height: props.size.height + amount.y,
+        width: props.size.width + amount.x * corner[position].left,
+        height: props.size.height + amount.y * corner[position].up,
+      }
+    );
+
+    props.onUpdatePosition?.call(
+      {},
+      {
+        x: coord.x + corner[position].x,
+        y: coord.y + corner[position].y,
       }
     );
   }
@@ -169,7 +187,7 @@ export default function TransformerControls(props: TransformerControls) {
           onPointerLeave={leaveControl}
           onPointerDown={onResizeStart}
           onPointerUp={onResizeEnd}
-          onPointerMove={resizeRect}
+          onPointerMove={(e) => resizeRect(e, 'TOP_LEFT')}
         />
       </Group>
       {/* Top Right */}
@@ -251,6 +269,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onResizeStart}
+          onPointerUp={onResizeEnd}
+          onPointerMove={(e) => resizeRect(e, 'BOTTOM_LEFT')}
         />
       </Group>
     </Group>
