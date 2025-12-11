@@ -1,4 +1,5 @@
 import { App as AntdApp } from 'antd';
+import { Leva } from 'leva';
 import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Stage, Text } from 'react-konva';
 import GroupBase from '../component/GroupBase';
@@ -17,6 +18,7 @@ export default function App() {
   }, []);
   return (
     <AntdApp>
+      <Leva hidden={false} titleBar={{ title: 'Debug', drag: false }} />
       <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           {!loading && (

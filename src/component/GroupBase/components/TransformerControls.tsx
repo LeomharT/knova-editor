@@ -1,4 +1,5 @@
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { useControls } from 'leva';
 import { Group, Line, Rect } from 'react-konva';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
@@ -11,6 +12,10 @@ type TransformerControls = {
 };
 
 export default function TransformerControls(props: TransformerControls) {
+  const { debugControls } = useControls({
+    debugControls: true,
+  });
+
   const LINE_WIDTH = 1;
 
   const CORNERS = {
@@ -89,19 +94,19 @@ export default function TransformerControls(props: TransformerControls) {
       <Group>
         <Rect
           name='TopLeftCtl_Rotate'
-          fill='white'
+          fill={debugControls ? 'white' : 'transparent'}
           x={-16}
           y={-16}
           width={16}
           height={16}
-          stroke={PRIMARY_COLOR}
+          stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'TOP_LEFT')}
           onPointerLeave={leaveControl}
         />
         <Rect
           name='TopLeftCtl_Scale'
-          fill='red'
+          fill='white'
           x={-4.5}
           y={-4.5}
           width={8}
@@ -116,19 +121,19 @@ export default function TransformerControls(props: TransformerControls) {
       <Group>
         <Rect
           name='TopRightCtl_Rotate'
-          fill='white'
+          fill={debugControls ? 'white' : 'transparent'}
           x={props.size.width}
           y={-16}
           width={16}
           height={16}
-          stroke={PRIMARY_COLOR}
+          stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'TOP_RIGHT')}
           onPointerLeave={leaveControl}
         />
         <Rect
           name='TopRightCtl_Scale'
-          fill='red'
+          fill='white'
           x={props.size.width - 4.5}
           y={-4.5}
           width={8}
@@ -143,19 +148,19 @@ export default function TransformerControls(props: TransformerControls) {
       <Group>
         <Rect
           name='BottomRightCtl_Rotate'
-          fill='white'
+          fill={debugControls ? 'white' : 'transparent'}
           x={props.size.width}
           y={props.size.height}
           width={16}
           height={16}
-          stroke={PRIMARY_COLOR}
+          stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_RIGHT')}
           onPointerLeave={leaveControl}
         />
         <Rect
           name='BottomRightCtl_Scale'
-          fill='red'
+          fill='white'
           x={props.size.width - 4.5}
           y={props.size.height - 4.5}
           width={8}
@@ -170,19 +175,19 @@ export default function TransformerControls(props: TransformerControls) {
       <Group>
         <Rect
           name='BottomLeftCtl_Rotate'
-          fill='white'
+          fill={debugControls ? 'white' : 'transparent'}
           x={-16}
           y={props.size.height}
           width={16}
           height={16}
-          stroke={PRIMARY_COLOR}
+          stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
         />
         <Rect
           name='BottomLeftCtl_Scale'
-          fill='red'
+          fill='white'
           x={-4.5}
           y={props.size.height - 4.5}
           width={8}
