@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -10,6 +11,8 @@ import type { GroupBasePosition, GroupBaseSize } from './tpye';
 export default function GroupBase() {
   const id = useId();
 
+  const ref = useRef<Konva.Group>(null);
+
   const textRef = useRef(null);
   const textRect = useRef(null);
 
@@ -20,6 +23,8 @@ export default function GroupBase() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
 
   const [size, setSize] = useState({ width: 200, height: 200 });
+
+  const [rotation, setRotation] = useState(0);
 
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
@@ -69,6 +74,25 @@ export default function GroupBase() {
     setupTooltip();
   }
 
+  function handleOnRotate(angle: number) {
+    setRotation(angle);
+
+    if (ref.current) {
+      const center = {
+        x: position.x + size.width / 2.0,
+        y: position.y + size.height / 2.0,
+      };
+
+      ref.current.offsetX(size.width / 2.0);
+      ref.current.offsetY(size.height / 2.0);
+
+      ref.current.rotation(angle);
+
+      ref.current.x(center.x);
+      ref.current.y(center.y);
+    }
+  }
+
   function setupTooltip() {
     if (textRef.current && textRect.current) {
       const textSize = {
@@ -94,6 +118,7 @@ export default function GroupBase() {
   return (
     <Group id={id}>
       <Group
+        ref={ref}
         draggable
         x={position.x}
         y={position.y}
@@ -112,13 +137,17 @@ export default function GroupBase() {
           strokeWidth={4}
         />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
+        <Text text='Hello'></Text>
       </Group>
       <TransformerControls
+        target={ref}
         size={size}
         position={position}
+        rotation={rotation}
         points={outlinePoints}
         visible={isSelected}
         onResize={handleOnResize}
+        onRotate={handleOnRotate}
         onUpdatePosition={handleOnUpdatePosition}
       />
       <Group
