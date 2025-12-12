@@ -62,7 +62,7 @@ export default function TransformerControls(props: TransformerControls) {
   }
 
   function leaveControl() {
-    document.body.style.cursor = 'default';
+    document.body.style.cursor = "url('/cursor.png') 0 0, default";
   }
 
   function onResizeStart(e: KonvaEventObject<PointerEvent>) {

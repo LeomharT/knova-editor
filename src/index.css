@@ -6,6 +6,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  cursor: url('/cursor.png') 0 0, default;
 
   --leva-sizes-rootWidth: 380px !important;
 }
