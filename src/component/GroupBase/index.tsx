@@ -1,8 +1,8 @@
 import Konva from 'konva';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
-import { useControls } from 'leva';
+import { button, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
-import { Group, Line, Rect, Text } from 'react-konva';
+import { Group, Image, Line, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
@@ -12,6 +12,8 @@ export default function GroupBase() {
   const id = useId();
 
   const ref = useRef<Konva.Group>(null);
+
+  const coverRef = useRef<Konva.Image>(null);
 
   const textRef = useRef(null);
   const textRect = useRef(null);
@@ -26,15 +28,24 @@ export default function GroupBase() {
 
   const [rotation, setRotation] = useState(0);
 
+  const [displacement, setDisplacement] = useState(position);
+
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
   const isSelected = selected.includes(id);
 
-  const { fillRectColor } = useControls({
+  const { fillRectColor } = useControls('GroupBase', {
     fillRectColor: {
       label: 'fillRectColor',
       value: '#ffd6e7',
     },
+    Upload: button(() => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.png,.jpe,.jpeg';
+
+      input.click();
+    }),
   });
 
   function handleOnPointerEnter() {
@@ -49,6 +60,10 @@ export default function GroupBase() {
     setPosition({
       x: e.target.x(),
       y: e.target.y(),
+    });
+    setDisplacement({
+      x: e.target.x() - e.target.offsetX(),
+      y: e.target.y() - e.target.offsetY(),
     });
   }
 
@@ -79,8 +94,8 @@ export default function GroupBase() {
 
     if (ref.current) {
       const center = {
-        x: position.x + size.width / 2.0,
-        y: position.y + size.height / 2.0,
+        x: displacement.x + size.width / 2.0,
+        y: displacement.y + size.height / 2.0,
       };
 
       ref.current.offsetX(size.width / 2.0);
@@ -137,12 +152,12 @@ export default function GroupBase() {
           strokeWidth={4}
         />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
+        <Image ref={coverRef} image={undefined} />
         <Text text='Hello'></Text>
       </Group>
       <TransformerControls
-        target={ref}
         size={size}
-        position={position}
+        position={displacement}
         rotation={rotation}
         points={outlinePoints}
         visible={isSelected}
@@ -152,8 +167,8 @@ export default function GroupBase() {
       />
       <Group
         name={'SIZE_TOOLTIP'}
-        x={position.x}
-        y={position.y + size.height + 5}
+        x={displacement.x}
+        y={displacement.y + size.height + 5}
         visible={isSelected}
       >
         <Rect ref={textRect} fill={PRIMARY_COLOR} cornerRadius={[4, 4, 4, 4]} />
