@@ -1,8 +1,9 @@
 import { App as AntdApp } from 'antd';
 import { Leva } from 'leva';
 import { useEffect, useRef, useState } from 'react';
-import { Layer, Rect, Stage, Text } from 'react-konva';
+import { Layer, Rect, Stage } from 'react-konva';
 import GroupBase from '../component/GroupBase';
+import Toolbar from '../component/Toolbar/idnex';
 import { useBearStore } from '../hooks/useBearStore';
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <AntdApp>
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
+      <Toolbar />
       <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           {!loading && (
@@ -39,7 +41,6 @@ export default function App() {
           )}
         </Layer>
         <Layer>
-          <Text text='Try to drag shapes' fontSize={15} />
           <GroupBase />
         </Layer>
       </Stage>

@@ -2,8 +2,9 @@ import Konva from 'konva';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
-import { Group, Image, Line, Rect, Text } from 'react-konva';
+import { Group, Image, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
+import Outline from '../Outline';
 import SizeTooltip from './components/SizeTooltip';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
@@ -49,6 +50,23 @@ export default function GroupBase() {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.png,.jpe,.jpeg';
+        input.multiple = false;
+
+        input.addEventListener('change', (e) => {
+          if (e.target instanceof HTMLInputElement) {
+            const files = e.target.files;
+
+            if (files && files[0]) {
+              const url = URL.createObjectURL(files[0]);
+              const image = document.createElement('img');
+              image.src = url;
+
+              image.onload = () => {
+                coverRef.current?.image(image);
+              };
+            }
+          }
+        });
 
         input.click();
       }),
@@ -154,22 +172,17 @@ export default function GroupBase() {
         draggable
         x={position.x}
         y={position.y}
+        width={size.width}
+        height={size.height}
         onDragEnd={handleOnDragEnd}
         onDragMove={handleOnDragMove}
         onPointerEnter={handleOnPointerEnter}
         onPointerLeave={handleOnPointerLeave}
         onPointerClick={handleOnSelect}
       >
-        <Line
-          closed
-          dashEnabled
-          points={outlinePoints}
-          stroke={PRIMARY_COLOR}
-          visible={isHover}
-          strokeWidth={4}
-        />
+        <Outline size={size} strokeWidth={4} stroke={PRIMARY_COLOR} visible={isHover} />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
-        <Image ref={coverRef} image={undefined} />
+        <Image ref={coverRef} image={undefined} width={size.width} height={size.height} />
         <Text text='Hello'></Text>
       </Group>
       <TransformerControls

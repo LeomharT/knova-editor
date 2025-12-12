@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.35.0",
     "antd": "^6.1.0",
     "konva": "^10.0.12",
     "leva": "^0.10.1",
