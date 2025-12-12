@@ -1,17 +1,21 @@
+import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useControls } from 'leva';
-import { useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { Group, Line, Rect } from 'react-konva';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
 type TransformerControls = {
+  target: RefObject<Konva.Group | null>;
   size: GroupBaseSize;
   position: GroupBasePosition;
   points: number[];
+  rotation: number;
   visible?: boolean;
   onResize?: (size: GroupBaseSize) => void;
   onUpdatePosition?: (position: GroupBasePosition) => void;
+  onRotate?: (angle: number) => void;
 };
 
 export default function TransformerControls(props: TransformerControls) {
@@ -24,7 +28,11 @@ export default function TransformerControls(props: TransformerControls) {
     BOTTOM_LEFT: [0, props.size.height],
   };
 
+  const ref = useRef<Konva.Group>(null);
+
   const enableResize = useRef(false);
+
+  const enableRotate = useRef(false);
 
   const prevCoord = useRef({
     x: 0,
@@ -32,7 +40,7 @@ export default function TransformerControls(props: TransformerControls) {
   });
 
   const { debugControls } = useControls({
-    debugControls: true,
+    debugControls: false,
   });
 
   function enterScale(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
@@ -131,8 +139,62 @@ export default function TransformerControls(props: TransformerControls) {
     );
   }
 
+  function onRotateStart(e: KonvaEventObject<PointerEvent>) {
+    enableRotate.current = true;
+
+    const canvas = e.target;
+    canvas.setPointerCapture(e.evt.pointerId);
+  }
+
+  function onRotateEnd() {
+    enableRotate.current = false;
+  }
+
+  function rotateRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
+    if (!enableRotate.current) return;
+
+    const corner = {
+      TOP_LEFT: 90 + 45,
+      TOP_RIGHT: 45,
+      BOTTOM_RIGHT: 45,
+      BOTTOM_LEFT: -45,
+    };
+
+    const coord = {
+      x: e.evt.clientX,
+      y: e.evt.clientY,
+    };
+
+    const center = {
+      x: props.position.x + props.size.width / 2.0,
+      y: props.position.y + props.size.height / 2.0,
+    };
+
+    const angle = Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
+
+    props.onRotate?.call({}, angle + corner[position]);
+  }
+
+  useEffect(() => {
+    if (ref.current) {
+      const center = {
+        x: props.position.x + props.size.width / 2.0,
+        y: props.position.y + props.size.height / 2.0,
+      };
+
+      ref.current.offsetX(props.size.width / 2.0);
+      ref.current.offsetY(props.size.height / 2.0);
+
+      ref.current.rotation(props.rotation);
+
+      ref.current.x(center.x);
+      ref.current.y(center.y);
+    }
+  }, [props.rotation, props.position, props.size]);
+
   return (
     <Group
+      ref={ref}
       name='TransformerControls'
       x={props.position.x}
       y={props.position.y}
@@ -179,6 +241,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'TOP_LEFT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onRotateStart}
+          onPointerUp={onRotateEnd}
+          onPointerMove={(e) => rotateRect(e, 'TOP_LEFT')}
         />
         <Rect
           name='TopLeftCtl_Scale'
