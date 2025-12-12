@@ -1,8 +1,9 @@
 import { App as AntdApp } from 'antd';
 import { Leva } from 'leva';
 import { useEffect, useRef, useState } from 'react';
-import { Layer, Rect, Stage } from 'react-konva';
+import { Layer, Rect } from 'react-konva';
 import GroupBase from '../component/GroupBase';
+import Scene from '../component/Scene';
 import Toolbar from '../component/Toolbar/idnex';
 import { useBearStore } from '../hooks/useBearStore';
 
@@ -22,7 +23,7 @@ export default function App() {
     <AntdApp>
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Toolbar />
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Scene width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           {!loading && (
             <Rect
@@ -43,7 +44,7 @@ export default function App() {
         <Layer>
           <GroupBase />
         </Layer>
-      </Stage>
+      </Scene>
     </AntdApp>
   );
 }

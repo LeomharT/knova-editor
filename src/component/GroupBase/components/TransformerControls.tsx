@@ -60,10 +60,10 @@ export default function TransformerControls(props: TransformerControls) {
     e.evt.stopPropagation();
 
     const cursor = {
-      TOP_LEFT: 'url("/rotate1.png") 20 20, auto',
-      TOP_RIGHT: 'url("/rotate2.png") 20 20, auto',
-      BOTTOM_RIGHT: 'url("/rotate3.png") 20 20, auto',
-      BOTTOM_LEFT: 'url("/rotate4.png") 20 20, auto',
+      TOP_LEFT: 'url("/rotate.svg") 12 12, auto',
+      TOP_RIGHT: 'url("/rotate.svg") 12 12, auto',
+      BOTTOM_RIGHT: 'url("/rotate.svg") 12 12, auto',
+      BOTTOM_LEFT: 'url("/rotate.svg") 12 12, auto',
     };
 
     document.body.style.cursor = cursor[position];
