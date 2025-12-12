@@ -46,7 +46,7 @@ export default function SizeTooltip(props: SizeTooltipProps) {
       ref.current.offsetX(props.size.width / 2.0);
       ref.current.offsetY(props.size.height / 2.0);
 
-      ref.current.rotation(props.rotation % 90);
+      ref.current.rotation(props.rotation);
 
       ref.current.x(center.x);
       ref.current.y(center.y);
