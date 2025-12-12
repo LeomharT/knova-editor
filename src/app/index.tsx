@@ -16,9 +16,10 @@ export default function App() {
     ref.current.src = '/download.svg';
     ref.current.onload = () => setLoading(false);
   }, []);
+
   return (
     <AntdApp>
-      <Leva hidden={false} titleBar={{ title: 'Debug', drag: false }} />
+      <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
           {!loading && (

@@ -6,4 +6,6 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+
+  --leva-sizes-rootWidth: 380px !important;
 }
