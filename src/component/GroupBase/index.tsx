@@ -86,6 +86,13 @@ export default function GroupBase() {
   function handleOnUpdatePosition(position: GroupBasePosition) {
     setPosition(position);
 
+    if (ref.current) {
+      setDisplacement({
+        x: position.x - ref.current.offsetX(),
+        y: position.y - ref.current.offsetY(),
+      });
+    }
+
     setupTooltip();
   }
 
