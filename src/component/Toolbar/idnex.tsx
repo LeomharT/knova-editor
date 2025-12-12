@@ -20,18 +20,22 @@ export default function Toolbar() {
           </Tooltip>
           <Divider vertical />
           <Space size='middle'>
-            <Button
-              type={active === 'cursor' ? 'primary' : 'text'}
-              size='large'
-              icon={<IconLocation style={{ transform: 'rotate(-90deg) translateX(-1px)' }} />}
-              onClick={() => setActive('cursor')}
-            />
-            <Button
-              type={active === 'rect' ? 'primary' : 'text'}
-              size='large'
-              icon={<IconSquare />}
-              onClick={() => setActive('rect')}
-            />
+            <Tooltip title='Cursor'>
+              <Button
+                type={active === 'cursor' ? 'primary' : 'text'}
+                size='large'
+                icon={<IconLocation style={{ transform: 'rotate(-90deg) translateX(-1px)' }} />}
+                onClick={() => setActive('cursor')}
+              />
+            </Tooltip>
+            <Tooltip title='Square'>
+              <Button
+                type={active === 'rect' ? 'primary' : 'text'}
+                size='large'
+                icon={<IconSquare />}
+                onClick={() => setActive('rect')}
+              />
+            </Tooltip>
           </Space>
         </Space>
       </Card>
