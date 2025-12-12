@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
-import { button, useControls } from 'leva';
+import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Image, Line, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
@@ -35,19 +35,25 @@ export default function GroupBase() {
 
   const isSelected = selected.includes(id);
 
-  const { fillRectColor } = useControls('GroupBase', {
-    fillRectColor: {
-      label: 'fillRectColor',
-      value: '#ffd6e7',
-    },
-    Upload: button(() => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.png,.jpe,.jpeg';
+  const [{ fillRectColor }, set] = useControls(() => ({
+    GroupBase: folder({
+      fillRectColor: {
+        label: 'FillRectColor',
+        value: '#ffd6e7',
+      },
+      rotation: {
+        label: 'Rotation',
+        value: rotation,
+      },
+      Upload: button(() => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.png,.jpe,.jpeg';
 
-      input.click();
+        input.click();
+      }),
     }),
-  });
+  }));
 
   function handleOnPointerEnter() {
     setHover(true);
@@ -99,6 +105,9 @@ export default function GroupBase() {
 
   function handleOnRotate(angle: number) {
     setRotation(angle);
+    set({
+      rotation: angle,
+    });
 
     if (ref.current) {
       const center = {
