@@ -26,7 +26,10 @@ export default function GroupBase() {
   const isSelected = selected.includes(id);
 
   const { fillRectColor } = useControls({
-    fillRectColor: '#ffd6e7',
+    fillRectColor: {
+      label: 'fillRectColor',
+      value: '#ffd6e7',
+    },
   });
 
   function handleOnPointerEnter() {
