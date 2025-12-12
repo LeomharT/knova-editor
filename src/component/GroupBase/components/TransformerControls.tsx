@@ -1,13 +1,12 @@
 import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useControls } from 'leva';
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, Line, Rect } from 'react-konva';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
 type TransformerControls = {
-  target: RefObject<Konva.Group | null>;
   size: GroupBaseSize;
   position: GroupBasePosition;
   points: number[];
@@ -16,6 +15,7 @@ type TransformerControls = {
   onResize?: (size: GroupBaseSize) => void;
   onUpdatePosition?: (position: GroupBasePosition) => void;
   onRotate?: (angle: number) => void;
+  onRotateEnd?: () => void;
 };
 
 export default function TransformerControls(props: TransformerControls) {
@@ -39,7 +39,7 @@ export default function TransformerControls(props: TransformerControls) {
     y: 0,
   });
 
-  const { debugControls } = useControls({
+  const { debugControls } = useControls('TransformerControls', {
     debugControls: false,
   });
 
@@ -148,6 +148,7 @@ export default function TransformerControls(props: TransformerControls) {
 
   function onRotateEnd() {
     enableRotate.current = false;
+    props.onRotateEnd?.call({});
   }
 
   function rotateRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
@@ -156,8 +157,8 @@ export default function TransformerControls(props: TransformerControls) {
     const corner = {
       TOP_LEFT: 90 + 45,
       TOP_RIGHT: 45,
-      BOTTOM_RIGHT: 45,
-      BOTTOM_LEFT: -45,
+      BOTTOM_RIGHT: -45,
+      BOTTOM_LEFT: -90 - 45,
     };
 
     const coord = {
@@ -274,6 +275,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'TOP_RIGHT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onRotateStart}
+          onPointerUp={onRotateEnd}
+          onPointerMove={(e) => rotateRect(e, 'TOP_RIGHT')}
         />
         <Rect
           name='TopRightCtl_Scale'
@@ -304,6 +308,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_RIGHT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onRotateStart}
+          onPointerUp={onRotateEnd}
+          onPointerMove={(e) => rotateRect(e, 'BOTTOM_RIGHT')}
         />
         <Rect
           name='BottomRightCtl_Scale'
@@ -334,6 +341,9 @@ export default function TransformerControls(props: TransformerControls) {
           strokeWidth={1}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
+          onPointerDown={onRotateStart}
+          onPointerUp={onRotateEnd}
+          onPointerMove={(e) => rotateRect(e, 'BOTTOM_LEFT')}
         />
         <Rect
           name='BottomLeftCtl_Scale'
