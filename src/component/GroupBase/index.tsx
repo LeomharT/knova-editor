@@ -4,6 +4,7 @@ import { button, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Image, Line, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
+import SizeTooltip from './components/SizeTooltip';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
@@ -172,23 +173,7 @@ export default function GroupBase() {
         onRotate={handleOnRotate}
         onUpdatePosition={handleOnUpdatePosition}
       />
-      <Group
-        name={'SIZE_TOOLTIP'}
-        x={displacement.x}
-        y={displacement.y + size.height + 5}
-        visible={isSelected}
-      >
-        <Rect ref={textRect} fill={PRIMARY_COLOR} cornerRadius={[4, 4, 4, 4]} />
-        <Text
-          ref={textRef}
-          padding={4}
-          height={14}
-          fontSize={12}
-          align='center'
-          fill='#ffffff'
-          text={`${Math.round(size.width)} x ${Math.round(size.height)}`}
-        />
-      </Group>
+      <SizeTooltip position={displacement} rotation={rotation} size={size} visible={isSelected} />
     </Group>
   );
 }
