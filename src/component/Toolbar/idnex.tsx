@@ -1,6 +1,6 @@
-import { Button, Card, Divider, Space } from 'antd';
+import { Button, Card, Divider, Space, Tooltip } from 'antd';
 
-import { IconSquare } from '@tabler/icons-react';
+import { IconLocation, IconLock, IconSquare } from '@tabler/icons-react';
 import { useState } from 'react';
 import classes from './style.module.css';
 export default function Toolbar() {
@@ -8,15 +8,31 @@ export default function Toolbar() {
 
   return (
     <div className={classes.root}>
-      <Card>
+      <Card classNames={{ body: classes.body }}>
         <Space>
-          <Button
-            type={active === 'rect' ? 'primary' : 'default'}
-            size='large'
-            icon={<IconSquare />}
-            onClick={() => setActive('rect')}
-          />
+          <Tooltip title='Lock select'>
+            <Button
+              type={active === 'lock' ? 'primary' : 'text'}
+              size='large'
+              icon={<IconLock />}
+              onClick={() => setActive('lock')}
+            />
+          </Tooltip>
           <Divider vertical />
+          <Space size='middle'>
+            <Button
+              type={active === 'cursor' ? 'primary' : 'text'}
+              size='large'
+              icon={<IconLocation style={{ transform: 'rotate(-90deg) translateX(-1px)' }} />}
+              onClick={() => setActive('cursor')}
+            />
+            <Button
+              type={active === 'rect' ? 'primary' : 'text'}
+              size='large'
+              icon={<IconSquare />}
+              onClick={() => setActive('rect')}
+            />
+          </Space>
         </Space>
       </Card>
     </div>
