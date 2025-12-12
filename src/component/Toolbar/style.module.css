@@ -2,8 +2,10 @@
   position: fixed;
   top: 12px;
   left: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transform: translateX(-50%);
   z-index: 99;
+  box-shadow: var(--ant-box-shadow-card);
+  border-radius: 8px;
 }
 
 .body {
