@@ -1,10 +1,10 @@
-import { Button, Card, Divider, Space, Tooltip } from 'antd';
-
 import { IconLocation, IconLock, IconRoute, IconSquare } from '@tabler/icons-react';
+import { Button, Card, Divider, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import classes from './style.module.css';
+
 export default function Toolbar() {
-  const [active, setActive] = useState('');
+  const [active, setActive] = useState('cursor');
 
   const [lock, setLock] = useState(false);
 
