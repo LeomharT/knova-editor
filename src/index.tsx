@@ -1,11 +1,10 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom/client";
-import App from "./app";
-import "./index.css";
+import 'antd/dist/reset.css';
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './app';
+import './index.css';
 
-const root = ReactDOM.createRoot(
-  document.querySelector("#root") as HTMLDivElement
-);
+const root = ReactDOM.createRoot(document.querySelector('#root') as HTMLDivElement);
 
 root.render(
   <StrictMode>

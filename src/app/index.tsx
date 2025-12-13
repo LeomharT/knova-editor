@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import GroupBase from '../component/GroupBase';
 import Toolbar from '../component/Toolbar/idnex';
+import ZoomControl from '../component/ZoomControl';
 import { useBearStore } from '../hooks/useBearStore';
 
-const scaleBy = 1.5;
+const scaleBy = 1.1;
 
 export default function App() {
   const stageRef = useRef<Konva.Stage>(null);
@@ -21,6 +22,8 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
 
+  const { setScale } = useBearStore();
+
   function onWheel(e: KonvaEventObject<WheelEvent>) {
     e.evt.preventDefault();
     if (!sceneRef.current || !stageRef.current) return;
@@ -28,8 +31,6 @@ export default function App() {
 
     const oldScale = sceneRef.current.scaleX();
     const pointer = stageRef.current.getPointerPosition()!;
-
-    console.log(oldScale);
 
     const mousePointTo = {
       x: (pointer.x - sceneRef.current.x()) / oldScale,
@@ -40,6 +41,7 @@ export default function App() {
 
     const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
     sceneRef.current.scale({ x: newScale, y: newScale });
+    setScale(newScale);
 
     const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
@@ -61,6 +63,7 @@ export default function App() {
     <AntdApp>
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Toolbar />
+      <ZoomControl />
       <Stage ref={stageRef} width={window.innerWidth} height={window.innerHeight} onWheel={onWheel}>
         <Layer>
           {!loading && (
