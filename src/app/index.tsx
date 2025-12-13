@@ -39,7 +39,10 @@ export default function App() {
 
     const direction = e.evt.deltaY > 0 ? -1 : 1;
 
-    const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    let newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    newScale = Number(newScale.toFixed(1));
+    console.log(newScale);
+
     sceneRef.current.scale({ x: newScale, y: newScale });
     setScale(newScale);
 

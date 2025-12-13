@@ -10,7 +10,7 @@ export default function ZoomControl() {
       <Space.Compact>
         <Button size='large' type='text' icon={<MinusOutlined />}></Button>
         <Button size='large' type='text'>
-          {scale * 100} %
+          {(scale * 100).toFixed(0)} %
         </Button>
         <Button size='large' type='text' icon={<PlusOutlined />}></Button>
       </Space.Compact>
