@@ -1,4 +1,5 @@
 import Konva from 'konva';
+import type { GroupConfig } from 'konva/lib/Group';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -10,7 +11,9 @@ import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
 
-export default function GroupBase() {
+type GroupBaseProps = GroupConfig;
+
+export default function GroupBase(props: GroupBaseProps) {
   const id = useId();
 
   const ref = useRef<Konva.Group>(null);
@@ -166,7 +169,7 @@ export default function GroupBase() {
   }, []);
 
   return (
-    <Group id={id}>
+    <Group id={id} {...props}>
       <Group
         ref={ref}
         draggable

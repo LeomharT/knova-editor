@@ -1,29 +1,67 @@
 import { App as AntdApp } from 'antd';
+import type Konva from 'konva';
+import type { KonvaEventObject } from 'konva/lib/Node';
 import { Leva } from 'leva';
 import { useEffect, useRef, useState } from 'react';
-import { Layer, Rect } from 'react-konva';
+import { Layer, Rect, Stage } from 'react-konva';
 import GroupBase from '../component/GroupBase';
-import Scene from '../component/Scene';
 import Toolbar from '../component/Toolbar/idnex';
 import { useBearStore } from '../hooks/useBearStore';
 
+const scaleBy = 1.5;
+
 export default function App() {
-  const ref = useRef<HTMLImageElement>(document.createElement('img'));
+  const stageRef = useRef<Konva.Stage>(null);
+
+  const sceneRef = useRef<Konva.Layer>(null);
+
+  const bgRef = useRef<HTMLImageElement>(document.createElement('img'));
 
   const setSelect = useBearStore((state) => state.setSelected);
 
   const [loading, setLoading] = useState(true);
 
+  function onWheel(e: KonvaEventObject<WheelEvent>) {
+    e.evt.preventDefault();
+    if (!sceneRef.current || !stageRef.current) return;
+    if (!e.evt.ctrlKey) return;
+
+    const oldScale = sceneRef.current.scaleX();
+    const pointer = stageRef.current.getPointerPosition()!;
+
+    console.log(oldScale);
+
+    const mousePointTo = {
+      x: (pointer.x - sceneRef.current.x()) / oldScale,
+      y: (pointer.y - sceneRef.current.y()) / oldScale,
+    };
+
+    const direction = e.evt.deltaY > 0 ? -1 : 1;
+
+    const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    sceneRef.current.scale({ x: newScale, y: newScale });
+
+    const newPos = {
+      x: pointer.x - mousePointTo.x * newScale,
+      y: pointer.y - mousePointTo.y * newScale,
+    };
+    sceneRef.current.position(newPos);
+  }
+
   useEffect(() => {
-    ref.current.src = '/download.svg';
-    ref.current.onload = () => setLoading(false);
+    bgRef.current.src = '/download.svg';
+    bgRef.current.onload = () => setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
   }, []);
 
   return (
     <AntdApp>
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Toolbar />
-      <Scene width={window.innerWidth} height={window.innerHeight}>
+      <Stage ref={stageRef} width={window.innerWidth} height={window.innerHeight} onWheel={onWheel}>
         <Layer>
           {!loading && (
             <Rect
@@ -32,7 +70,7 @@ export default function App() {
               width={window.innerWidth}
               height={window.innerHeight}
               // eslint-disable-next-line react-hooks/refs
-              fillPatternImage={ref.current}
+              fillPatternImage={bgRef.current}
               fillPatternRepeat='repeat'
               fillPatternScale={{ x: 1, y: 1 }}
               onPointerClick={() => {
@@ -41,10 +79,10 @@ export default function App() {
             />
           )}
         </Layer>
-        <Layer>
+        <Layer ref={sceneRef}>
           <GroupBase />
         </Layer>
-      </Scene>
+      </Stage>
     </AntdApp>
   );
 }
