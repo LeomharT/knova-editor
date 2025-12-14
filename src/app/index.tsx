@@ -16,6 +16,8 @@ export default function App() {
 
   const sceneRef = useRef<Konva.Layer>(null);
 
+  const rectRef = useRef<Konva.Rect>(null);
+
   const bgRef = useRef<HTMLImageElement>(document.createElement('img'));
 
   const setSelect = useBearStore((state) => state.setSelected);
@@ -60,6 +62,16 @@ export default function App() {
 
   useEffect(() => {
     window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      stageRef.current?.width(window.innerWidth);
+      stageRef.current?.height(window.innerHeight);
+
+      rectRef.current?.width(window.innerWidth);
+      rectRef.current?.height(window.innerHeight);
+    });
   }, []);
 
   return (
