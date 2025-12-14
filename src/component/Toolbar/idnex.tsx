@@ -1,12 +1,10 @@
 import { IconLocation, IconLock, IconRoute, IconSquare } from '@tabler/icons-react';
 import { Button, Card, Divider, Space, Tooltip } from 'antd';
-import { useState } from 'react';
+import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
 
 export default function Toolbar() {
-  const [active, setActive] = useState('cursor');
-
-  const [lock, setLock] = useState(false);
+  const { action, setAction } = useBearStore();
 
   const actions = [
     {
@@ -32,10 +30,10 @@ export default function Toolbar() {
         <Space>
           <Tooltip title='Lock select'>
             <Button
-              type={lock ? 'primary' : 'text'}
+              type={action.locked ? 'primary' : 'text'}
               size='large'
               icon={<IconLock />}
-              onClick={() => setLock((prev) => !prev)}
+              onClick={() => setAction({ ...action, locked: !action.locked })}
             />
           </Tooltip>
           <Divider vertical />
@@ -44,9 +42,9 @@ export default function Toolbar() {
               <Tooltip key={item.key} title={item.tooltip}>
                 <Button
                   size='large'
-                  type={active === item.key ? 'primary' : 'text'}
+                  type={action.active === item.key ? 'primary' : 'text'}
                   icon={item.icon}
-                  onClick={() => setActive(item.key)}
+                  onClick={() => setAction({ ...action, active: item.key })}
                 />
               </Tooltip>
             ))}

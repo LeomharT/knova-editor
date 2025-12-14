@@ -9,8 +9,6 @@ import Toolbar from '../component/Toolbar/idnex';
 import ZoomControl from '../component/ZoomControl';
 import { useBearStore } from '../hooks/useBearStore';
 
-const scaleBy = 1.1;
-
 export default function App() {
   const stageRef = useRef<Konva.Stage>(null);
 
@@ -41,9 +39,8 @@ export default function App() {
 
     const direction = e.evt.deltaY > 0 ? -1 : 1;
 
-    let newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    let newScale = direction > 0 ? oldScale + 0.1 : oldScale - 0.1;
     newScale = Number(newScale.toFixed(1));
-    console.log(newScale);
 
     sceneRef.current.scale({ x: newScale, y: newScale });
     setScale(newScale);

@@ -6,6 +6,11 @@ export type BearStore = {
   setSelected: (value: string[]) => void;
   scale: number;
   setScale: (value: number) => void;
+  action: {
+    locked: boolean;
+    active: string;
+  };
+  setAction: (value: { locked: boolean; active: string }) => void;
 };
 
 export const useBearStore = create<BearStore>((set) => {
@@ -14,5 +19,10 @@ export const useBearStore = create<BearStore>((set) => {
     setSelected: (selected) => set((state) => ({ ...state, selected })),
     scale: 1,
     setScale: (scale) => set((state) => ({ ...state, scale })),
+    action: {
+      locked: false,
+      active: 'cursor',
+    },
+    setAction: (action) => set((state) => ({ ...state, action })),
   };
 });
