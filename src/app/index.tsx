@@ -71,6 +71,8 @@ export default function App() {
 
       rectRef.current?.width(window.innerWidth);
       rectRef.current?.height(window.innerHeight);
+      rectRef.current?.fillPatternScale({ x: 1, y: 1 });
+      rectRef.current?.getLayer()?.batchDraw();
     });
   }, []);
 

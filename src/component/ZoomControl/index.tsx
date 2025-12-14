@@ -5,12 +5,19 @@ import classes from './style.module.css';
 export default function ZoomControl() {
   const { scale } = useBearStore();
 
+  const value = (scale * 100).toFixed(0);
+
   return (
     <Card className={classes.root} styles={{ body: { padding: 0 } }}>
       <Space.Compact>
-        <Button size='large' type='text' icon={<MinusOutlined />}></Button>
+        <Button
+          disabled={Number(value) <= 50}
+          size='large'
+          type='text'
+          icon={<MinusOutlined />}
+        ></Button>
         <Button size='large' type='text'>
-          {(scale * 100).toFixed(0)} %
+          {value} %
         </Button>
         <Button size='large' type='text' icon={<PlusOutlined />}></Button>
       </Space.Compact>
