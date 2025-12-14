@@ -85,6 +85,7 @@ export default function App() {
         <Layer>
           {!loading && (
             <Rect
+              ref={rectRef}
               x={0}
               y={0}
               width={window.innerWidth}
