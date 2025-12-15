@@ -1,12 +1,15 @@
+import { useQuery } from '@tanstack/react-query';
 import { App as AntdApp } from 'antd';
 import type Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { Leva } from 'leva';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
+import { getBackgroundImage } from '../api/stage';
 import GroupBase from '../component/GroupBase';
 import Toolbar from '../component/Toolbar/idnex';
 import ZoomControl from '../component/ZoomControl';
+import { QUERIES } from '../constants/queries';
 import { useBearStore } from '../hooks/useBearStore';
 
 export default function App() {
@@ -16,15 +19,16 @@ export default function App() {
 
   const rectRef = useRef<Konva.Rect>(null);
 
-  const bgRef = useRef<HTMLImageElement>(document.createElement('img'));
-
   const setSelect = useBearStore((state) => state.setSelected);
-
-  const [loading, setLoading] = useState(true);
 
   const { setScale } = useBearStore();
 
-  function onWheel(e: KonvaEventObject<WheelEvent>) {
+  const query = useQuery({
+    queryKey: [QUERIES.BACKGROUND_IMAGE],
+    queryFn: getBackgroundImage,
+  });
+
+  function handleOnWheel(e: KonvaEventObject<WheelEvent>) {
     e.evt.preventDefault();
     if (!sceneRef.current || !stageRef.current) return;
     if (!e.evt.ctrlKey) return;
@@ -53,11 +57,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    bgRef.current.src = '/download.svg';
-    bgRef.current.onload = () => setLoading(false);
-  }, []);
-
-  useEffect(() => {
     window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
   }, []);
 
@@ -78,17 +77,21 @@ export default function App() {
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Toolbar />
       <ZoomControl />
-      <Stage ref={stageRef} width={window.innerWidth} height={window.innerHeight} onWheel={onWheel}>
+      <Stage
+        ref={stageRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onWheel={handleOnWheel}
+      >
         <Layer>
-          {!loading && (
+          {!query.isFetching && (
             <Rect
               ref={rectRef}
               x={0}
               y={0}
               width={window.innerWidth}
               height={window.innerHeight}
-              // eslint-disable-next-line react-hooks/refs
-              fillPatternImage={bgRef.current}
+              fillPatternImage={query.data}
               fillPatternRepeat='repeat'
               fillPatternScale={{ x: 1, y: 1 }}
               onPointerClick={() => {

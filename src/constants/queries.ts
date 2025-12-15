@@ -1,0 +1,3 @@
+export const QUERIES = {
+  BACKGROUND_IMAGE: 'BACKGROUND_IMAGE',
+};
