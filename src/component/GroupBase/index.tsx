@@ -41,10 +41,10 @@ export default function GroupBase(props: GroupBaseProps) {
   const isSelected = selected.includes(id);
 
   const [{ fillRectColor }, set] = useControls(() => ({
-    GroupBase: folder({
+    [id]: folder({
       fillRectColor: {
         label: 'FillRectColor',
-        value: '#ffd6e7',
+        value: props.fill ?? '#ffd6e7',
       },
       rotation: {
         label: 'Rotation',
@@ -171,6 +171,10 @@ export default function GroupBase(props: GroupBaseProps) {
   useEffect(() => {
     setupTooltip();
   }, []);
+
+  useEffect(() => {
+    setSelected([id]);
+  }, [setSelected, id]);
 
   return (
     <Group id={id} {...props}>

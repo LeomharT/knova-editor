@@ -33,7 +33,7 @@ export default function Toolbar() {
     <div className={classes.root}>
       <Card classNames={{ body: classes.body }}>
         <Space>
-          <Tooltip title='Lock select'>
+          <Tooltip arrow={false} title='Lock select'>
             <Button
               type={action.locked ? 'primary' : 'text'}
               size='large'
@@ -44,7 +44,7 @@ export default function Toolbar() {
           <Divider vertical />
           <Space size='middle'>
             {actions.map((item) => (
-              <Tooltip key={item.key} title={item.tooltip}>
+              <Tooltip key={item.key} arrow={false} title={item.tooltip}>
                 <Button
                   size='large'
                   type={action.active === item.key ? 'primary' : 'text'}

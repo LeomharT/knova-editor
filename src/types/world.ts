@@ -4,4 +4,5 @@ export interface World {
   y: number;
   width: number;
   height: number;
+  fill?: string;
 }

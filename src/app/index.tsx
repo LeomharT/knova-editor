@@ -110,6 +110,7 @@ export default function App() {
             y: newRect.current.y(),
             width: newRect.current.width(),
             height: newRect.current.height(),
+            fill: fillRectColor,
           },
         ]);
 
