@@ -23,7 +23,7 @@ export default function GroupBase(props: GroupBaseProps) {
   const textRef = useRef(null);
   const textRect = useRef(null);
 
-  const { selected, setSelected } = useBearStore((state) => state);
+  const { selected, setSelected, action } = useBearStore();
 
   const [isHover, setHover] = useState(false);
 
@@ -102,7 +102,9 @@ export default function GroupBase(props: GroupBaseProps) {
   function handleOnSelect(e: KonvaEventObject<PointerEvent>) {
     e.evt.stopPropagation();
 
-    setSelected([id]);
+    if (action.active === 'cursor') {
+      setSelected([id]);
+    }
   }
 
   function handleOnResize(size: GroupBaseSize) {
@@ -172,7 +174,7 @@ export default function GroupBase(props: GroupBaseProps) {
     <Group id={id} {...props}>
       <Group
         ref={ref}
-        draggable
+        draggable={action.active === 'cursor'}
         x={position.x}
         y={position.y}
         width={size.width}

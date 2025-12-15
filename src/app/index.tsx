@@ -46,6 +46,8 @@ export default function App() {
     let newScale = direction > 0 ? oldScale + 0.1 : oldScale - 0.1;
     newScale = Number(newScale.toFixed(1));
 
+    if (newScale < 0.5 || newScale > 2.0) return;
+
     sceneRef.current.scale({ x: newScale, y: newScale });
     setScale(newScale);
 
@@ -94,15 +96,14 @@ export default function App() {
               fillPatternImage={query.data}
               fillPatternRepeat='repeat'
               fillPatternScale={{ x: 1, y: 1 }}
-              onPointerClick={() => {
-                setSelect([]);
-              }}
+              onPointerClick={() => setSelect([])}
             />
           )}
         </Layer>
         <Layer ref={sceneRef}>
           <GroupBase />
         </Layer>
+        <Layer></Layer>
       </Stage>
     </AntdApp>
   );
