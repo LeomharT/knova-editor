@@ -102,8 +102,6 @@ export default function App() {
 
         world.pop();
 
-        console.log(newRect.current.x());
-
         setWorld([
           ...world,
           {

@@ -90,8 +90,8 @@ export default function GroupBase(props: GroupBaseProps) {
 
   function handleOnDragMove(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
     setPosition({
-      x: e.target.absolutePosition().x,
-      y: e.target.absolutePosition().y,
+      x: e.target.absolutePosition().x - e.target.offsetX(),
+      y: e.target.absolutePosition().y - e.target.offsetY(),
     });
     setDisplacement({
       x: e.target.x() - e.target.offsetX(),
