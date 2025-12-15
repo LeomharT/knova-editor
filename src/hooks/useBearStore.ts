@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { World } from '../types/world';
 
 export type BearStore = {
   /** Selected ids */
@@ -11,6 +12,8 @@ export type BearStore = {
     active: string;
   };
   setAction: (value: { locked: boolean; active: string }) => void;
+  world: World[];
+  setWorld: (value: World[]) => void;
 };
 
 export const useBearStore = create<BearStore>((set) => {
@@ -24,5 +27,7 @@ export const useBearStore = create<BearStore>((set) => {
       active: 'cursor',
     },
     setAction: (action) => set((state) => ({ ...state, action })),
+    world: [{ key: '1', x: 50, y: 50, width: 200, height: 200 }],
+    setWorld: (world) => set((state) => ({ ...state, world })),
   };
 });

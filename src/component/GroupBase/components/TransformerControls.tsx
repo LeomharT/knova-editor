@@ -3,6 +3,7 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import { useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import { Group, Line, Rect } from 'react-konva';
+import { useBearStore } from '../../../hooks/useBearStore';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
@@ -19,7 +20,9 @@ type TransformerControls = {
 };
 
 export default function TransformerControls(props: TransformerControls) {
-  const LINE_WIDTH = 1;
+  const { scale } = useBearStore();
+
+  const LINE_WIDTH = 1 / scale;
 
   const CORNERS = {
     TOP_LEFT: [0, 0],
@@ -90,18 +93,20 @@ export default function TransformerControls(props: TransformerControls) {
   }
 
   function resizeRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
-    if (!enableResize.current) return;
+    const stage = e.target.getStage();
+
+    if (!enableResize.current || !stage) return;
 
     const corner = {
-      TOP_LEFT: { x: 0, y: 0, up: -1, left: -1 },
-      TOP_RIGHT: { x: -1, y: 0, up: -1, left: 1 },
-      BOTTOM_RIGHT: { x: -1, y: -1, up: 1, left: 1 },
-      BOTTOM_LEFT: { x: 0, y: -1, up: 1, left: -1 },
+      TOP_LEFT: { x: 1, y: 1, up: -1, left: -1 },
+      TOP_RIGHT: { x: 0, y: 1, up: -1, left: 1 },
+      BOTTOM_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
+      BOTTOM_LEFT: { x: 1, y: 0, up: 1, left: -1 },
     };
 
     const coord = {
-      x: e.evt.clientX,
-      y: e.evt.clientY,
+      x: stage.getPointerPosition()?.x ?? 0,
+      y: stage.getPointerPosition()?.y ?? 0,
     };
 
     const amount = {
@@ -114,13 +119,12 @@ export default function TransformerControls(props: TransformerControls) {
       y: coord.y,
     };
 
-    props.onResize?.call(
-      {},
-      {
-        width: props.size.width + amount.x * corner[position].left,
-        height: props.size.height + amount.y * corner[position].up,
-      }
-    );
+    const newSize = {
+      width: props.size.width + amount.x * corner[position].left,
+      height: props.size.height + amount.y * corner[position].up,
+    };
+
+    props.onResize?.call({}, newSize);
 
     const newPosition = { x: 0, y: 0 };
 
@@ -133,8 +137,8 @@ export default function TransformerControls(props: TransformerControls) {
     props.onUpdatePosition?.call(
       {},
       {
-        x: coord.x + newPosition.x,
-        y: coord.y + newPosition.y,
+        x: amount.x * corner[position].x,
+        y: amount.y * corner[position].y,
       }
     );
   }
@@ -152,7 +156,9 @@ export default function TransformerControls(props: TransformerControls) {
   }
 
   function rotateRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
-    if (!enableRotate.current) return;
+    const stage = e.target.getStage();
+
+    if (!enableRotate.current || !stage) return;
 
     const corner = {
       TOP_LEFT: 90 + 45,
@@ -161,10 +167,7 @@ export default function TransformerControls(props: TransformerControls) {
       BOTTOM_LEFT: -90 - 45,
     };
 
-    const coord = {
-      x: e.evt.clientX,
-      y: e.evt.clientY,
-    };
+    const coord = stage.getPointerPosition()!;
 
     const center = {
       x: props.position.x + props.size.width / 2.0,
@@ -239,7 +242,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={16}
           height={16}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'TOP_LEFT')}
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
@@ -254,7 +257,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={8}
           height={8}
           stroke={PRIMARY_COLOR}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'TOP_LEFT')}
           onPointerLeave={leaveControl}
           onPointerDown={onResizeStart}
@@ -272,7 +275,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={16}
           height={16}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'TOP_RIGHT')}
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
@@ -287,7 +290,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={8}
           height={8}
           stroke={PRIMARY_COLOR}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'TOP_RIGHT')}
           onPointerLeave={leaveControl}
           onPointerDown={onResizeStart}
@@ -305,7 +308,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={16}
           height={16}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_RIGHT')}
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
@@ -320,7 +323,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={8}
           height={8}
           stroke={PRIMARY_COLOR}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_RIGHT')}
           onPointerLeave={leaveControl}
           onPointerDown={onResizeStart}
@@ -338,7 +341,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={16}
           height={16}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
@@ -353,7 +356,7 @@ export default function TransformerControls(props: TransformerControls) {
           width={8}
           height={8}
           stroke={PRIMARY_COLOR}
-          strokeWidth={1}
+          strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_LEFT')}
           onPointerLeave={leaveControl}
           onPointerDown={onResizeStart}

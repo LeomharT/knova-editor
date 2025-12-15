@@ -4,7 +4,7 @@ import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
 
 export default function Toolbar() {
-  const { action, setAction } = useBearStore();
+  const { action, setAction, setSelected } = useBearStore();
 
   const actions = [
     {
@@ -23,6 +23,11 @@ export default function Toolbar() {
       icon: <IconRoute />,
     },
   ];
+
+  function onActionChange(active: string) {
+    setAction({ ...action, active });
+    setSelected([]);
+  }
 
   return (
     <div className={classes.root}>
@@ -44,7 +49,7 @@ export default function Toolbar() {
                   size='large'
                   type={action.active === item.key ? 'primary' : 'text'}
                   icon={item.icon}
-                  onClick={() => setAction({ ...action, active: item.key })}
+                  onClick={() => onActionChange(item.key)}
                 />
               </Tooltip>
             ))}

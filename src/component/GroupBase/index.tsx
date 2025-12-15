@@ -5,13 +5,14 @@ import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Image, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
+import type { World } from '../../types/world';
 import Outline from '../Outline';
 import SizeTooltip from './components/SizeTooltip';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
 
-type GroupBaseProps = GroupConfig;
+type GroupBaseProps = GroupConfig & World;
 
 export default function GroupBase(props: GroupBaseProps) {
   const id = useId();
@@ -114,12 +115,15 @@ export default function GroupBase(props: GroupBaseProps) {
   }
 
   function handleOnUpdatePosition(position: GroupBasePosition) {
-    setPosition(position);
+    // setPosition(position);
 
     if (ref.current) {
+      ref.current.x(ref.current.x() + position.x);
+      ref.current.y(ref.current.y() + position.y);
+
       setDisplacement({
-        x: position.x - ref.current.offsetX(),
-        y: position.y - ref.current.offsetY(),
+        x: ref.current.x() - ref.current.offsetX(),
+        y: ref.current.y() - ref.current.offsetY(),
       });
     }
 
@@ -175,8 +179,6 @@ export default function GroupBase(props: GroupBaseProps) {
       <Group
         ref={ref}
         draggable={action.active === 'cursor'}
-        x={position.x}
-        y={position.y}
         width={size.width}
         height={size.height}
         onDragEnd={handleOnDragEnd}

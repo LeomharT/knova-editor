@@ -21,7 +21,7 @@ export default function App() {
 
   const setSelect = useBearStore((state) => state.setSelected);
 
-  const { setScale } = useBearStore();
+  const { world, setWorld, setScale } = useBearStore();
 
   const query = useQuery({
     queryKey: [QUERIES.BACKGROUND_IMAGE],
@@ -57,6 +57,12 @@ export default function App() {
     };
     sceneRef.current.position(newPos);
   }
+
+  function onPointerDown(e: KonvaEventObject<PointerEvent>) {}
+
+  function onPointerUp(e: KonvaEventObject<PointerEvent>) {}
+
+  function onPointerMove(e: KonvaEventObject<PointerEvent>) {}
 
   useEffect(() => {
     window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
@@ -102,6 +108,9 @@ export default function App() {
         </Layer>
         <Layer ref={sceneRef}>
           <GroupBase />
+          {world.map((value, index) => {
+            return <GroupBase {...value} key={index.toString()} />;
+          })}
         </Layer>
         <Layer></Layer>
       </Stage>
