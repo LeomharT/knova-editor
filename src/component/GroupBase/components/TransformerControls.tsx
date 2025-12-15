@@ -113,6 +113,8 @@ export default function TransformerControls(props: TransformerControls) {
       x: coord.x - prevCoord.current.x,
       y: coord.y - prevCoord.current.y,
     };
+    amount.x /= scale;
+    amount.y /= scale;
 
     prevCoord.current = {
       x: coord.x,

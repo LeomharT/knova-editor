@@ -26,7 +26,12 @@ export default function ZoomControl(props: ZoomControlProps) {
             {value} %
           </Button>
         </Tooltip>
-        <Button size='large' type='text' icon={<PlusOutlined />}></Button>
+        <Button
+          disabled={Number(value) >= 200}
+          size='large'
+          type='text'
+          icon={<PlusOutlined />}
+        ></Button>
       </Space.Compact>
     </Card>
   );
