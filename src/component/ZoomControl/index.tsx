@@ -2,7 +2,12 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Tooltip } from 'antd';
 import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
-export default function ZoomControl() {
+
+type ZoomControlProps = {
+  onReset?: () => void;
+};
+
+export default function ZoomControl(props: ZoomControlProps) {
   const { scale } = useBearStore();
 
   const value = (scale * 100).toFixed(0);
@@ -17,7 +22,7 @@ export default function ZoomControl() {
           icon={<MinusOutlined />}
         ></Button>
         <Tooltip arrow={false} title='Reset zoom'>
-          <Button size='large' type='text'>
+          <Button size='large' type='text' onClick={props.onReset}>
             {value} %
           </Button>
         </Tooltip>

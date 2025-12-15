@@ -28,9 +28,9 @@ export default function GroupBase(props: GroupBaseProps) {
 
   const [isHover, setHover] = useState(false);
 
-  const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [position, setPosition] = useState({ x: props.x, y: props.x });
 
-  const [size, setSize] = useState({ width: 200, height: 200 });
+  const [size, setSize] = useState({ width: props.width, height: props.width });
 
   const [rotation, setRotation] = useState(0);
 

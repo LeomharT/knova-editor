@@ -21,7 +21,7 @@ export default function App() {
 
   const setSelect = useBearStore((state) => state.setSelected);
 
-  const { world, setWorld, setScale } = useBearStore();
+  const { world, setScale } = useBearStore();
 
   const query = useQuery({
     queryKey: [QUERIES.BACKGROUND_IMAGE],
@@ -58,6 +58,12 @@ export default function App() {
     sceneRef.current.position(newPos);
   }
 
+  function resetZoom() {
+    sceneRef.current?.scale({ x: 1, y: 1 });
+    sceneRef.current?.position({ x: 0, y: 0 });
+    setScale(1.0);
+  }
+
   function onPointerDown(e: KonvaEventObject<PointerEvent>) {}
 
   function onPointerUp(e: KonvaEventObject<PointerEvent>) {}
@@ -84,7 +90,7 @@ export default function App() {
     <AntdApp>
       <Leva hidden={false} titleBar={{ title: 'Debug', drag: true }} />
       <Toolbar />
-      <ZoomControl />
+      <ZoomControl onReset={resetZoom} />
       <Stage
         ref={stageRef}
         width={window.innerWidth}
@@ -107,7 +113,6 @@ export default function App() {
           )}
         </Layer>
         <Layer ref={sceneRef}>
-          <GroupBase />
           {world.map((value, index) => {
             return <GroupBase {...value} key={index.toString()} />;
           })}
