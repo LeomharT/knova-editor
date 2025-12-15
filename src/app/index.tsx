@@ -102,6 +102,8 @@ export default function App() {
 
         world.pop();
 
+        console.log(newRect.current.x());
+
         setWorld([
           ...world,
           {
@@ -140,6 +142,10 @@ export default function App() {
       width: prevCoord.current.x - coord.x,
       height: prevCoord.current.y - coord.y,
     };
+
+    if (e.evt.shiftKey) {
+      size.height = size.width;
+    }
 
     if (newRect.current) {
       newRect.current.width(Math.abs(size.width));

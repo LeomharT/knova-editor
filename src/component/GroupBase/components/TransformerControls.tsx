@@ -10,6 +10,7 @@ import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 type TransformerControls = {
   size: GroupBaseSize;
   position: GroupBasePosition;
+  absolutePosition: GroupBasePosition;
   points: number[];
   rotation: number;
   visible?: boolean;
@@ -172,8 +173,8 @@ export default function TransformerControls(props: TransformerControls) {
     const coord = stage.getPointerPosition()!;
 
     const center = {
-      x: props.position.x + props.size.width / 2.0,
-      y: props.position.y + props.size.height / 2.0,
+      x: props.absolutePosition.x + props.size.width / 2.0,
+      y: props.absolutePosition.y + props.size.height / 2.0,
     };
 
     const angle = Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);

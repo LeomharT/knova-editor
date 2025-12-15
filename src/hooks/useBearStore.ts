@@ -27,7 +27,7 @@ export const useBearStore = create<BearStore>((set) => {
       active: 'cursor',
     },
     setAction: (action) => set((state) => ({ ...state, action })),
-    world: [{ key: '00', x: 0, y: 0, width: 0, height: 0 }],
+    world: [],
     setWorld: (world) => set((state) => ({ ...state, world })),
   };
 });

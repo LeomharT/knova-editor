@@ -28,7 +28,7 @@ export default function GroupBase(props: GroupBaseProps) {
 
   const [isHover, setHover] = useState(false);
 
-  const [, setPosition] = useState({ x: props.x, y: props.y });
+  const [position, setPosition] = useState({ x: props.x, y: props.y });
 
   const [size, setSize] = useState({ width: props.width, height: props.height });
 
@@ -41,40 +41,43 @@ export default function GroupBase(props: GroupBaseProps) {
   const isSelected = selected.includes(id);
 
   const [{ fillRectColor }, set] = useControls(() => ({
-    [id]: folder({
-      fillRectColor: {
-        label: 'FillRectColor',
-        value: props.fill ?? '#ffd6e7',
-      },
-      rotation: {
-        label: 'Rotation',
-        value: rotation,
-      },
-      Upload: button(() => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.png,.jpe,.jpeg';
-        input.multiple = false;
+    [id]: folder(
+      {
+        fillRectColor: {
+          label: 'FillRectColor',
+          value: props.fill ?? '#ffd6e7',
+        },
+        rotation: {
+          label: 'Rotation',
+          value: rotation,
+        },
+        Upload: button(() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.png,.jpe,.jpeg';
+          input.multiple = false;
 
-        input.addEventListener('change', (e) => {
-          if (e.target instanceof HTMLInputElement) {
-            const files = e.target.files;
+          input.addEventListener('change', (e) => {
+            if (e.target instanceof HTMLInputElement) {
+              const files = e.target.files;
 
-            if (files && files[0]) {
-              const url = URL.createObjectURL(files[0]);
-              const image = document.createElement('img');
-              image.src = url;
+              if (files && files[0]) {
+                const url = URL.createObjectURL(files[0]);
+                const image = document.createElement('img');
+                image.src = url;
 
-              image.onload = () => {
-                coverRef.current?.image(image);
-              };
+                image.onload = () => {
+                  coverRef.current?.image(image);
+                };
+              }
             }
-          }
-        });
+          });
 
-        input.click();
-      }),
-    }),
+          input.click();
+        }),
+      },
+      { collapsed: true }
+    ),
   }));
 
   function handleOnPointerEnter() {
@@ -87,8 +90,8 @@ export default function GroupBase(props: GroupBaseProps) {
 
   function handleOnDragMove(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
     setPosition({
-      x: e.target.x(),
-      y: e.target.y(),
+      x: e.target.absolutePosition().x,
+      y: e.target.absolutePosition().y,
     });
     setDisplacement({
       x: e.target.x() - e.target.offsetX(),
@@ -130,9 +133,7 @@ export default function GroupBase(props: GroupBaseProps) {
 
   function handleOnRotate(angle: number) {
     setRotation(angle);
-    set({
-      rotation: angle,
-    });
+    set({ rotation: angle });
 
     if (ref.current) {
       const center = {
@@ -197,6 +198,7 @@ export default function GroupBase(props: GroupBaseProps) {
       <TransformerControls
         size={size}
         position={displacement}
+        absolutePosition={position}
         rotation={rotation}
         points={outlinePoints}
         visible={isSelected}
