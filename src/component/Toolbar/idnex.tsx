@@ -13,7 +13,7 @@ export default function Toolbar() {
       icon: <IconLocation style={{ transform: 'rotate(-90deg) translateX(-1px)' }} />,
     },
     {
-      key: 'square',
+      key: 'rect',
       tooltip: 'Square',
       icon: <IconSquare />,
     },

@@ -28,13 +28,13 @@ export default function GroupBase(props: GroupBaseProps) {
 
   const [isHover, setHover] = useState(false);
 
-  const [position, setPosition] = useState({ x: props.x, y: props.x });
+  const [, setPosition] = useState({ x: props.x, y: props.y });
 
-  const [size, setSize] = useState({ width: props.width, height: props.width });
+  const [size, setSize] = useState({ width: props.width, height: props.height });
 
   const [rotation, setRotation] = useState(0);
 
-  const [displacement, setDisplacement] = useState(position);
+  const [displacement, setDisplacement] = useState({ x: 0, y: 0 });
 
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
@@ -115,8 +115,6 @@ export default function GroupBase(props: GroupBaseProps) {
   }
 
   function handleOnUpdatePosition(position: GroupBasePosition) {
-    // setPosition(position);
-
     if (ref.current) {
       ref.current.x(ref.current.x() + position.x);
       ref.current.y(ref.current.y() + position.y);
@@ -190,7 +188,7 @@ export default function GroupBase(props: GroupBaseProps) {
         <Outline size={size} strokeWidth={4} stroke={PRIMARY_COLOR} visible={isHover} />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
         <Image ref={coverRef} image={undefined} width={size.width} height={size.height} />
-        <Text text='Hello'></Text>
+        <Text text={id}></Text>
       </Group>
       <TransformerControls
         size={size}

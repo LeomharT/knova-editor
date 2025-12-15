@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { App as AntdApp } from 'antd';
-import type Konva from 'konva';
+import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { Leva } from 'leva';
+import { Leva, useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import { getBackgroundImage } from '../api/stage';
@@ -21,7 +21,17 @@ export default function App() {
 
   const setSelect = useBearStore((state) => state.setSelected);
 
-  const { world, setScale } = useBearStore();
+  const { action, world, setScale, setWorld, setAction } = useBearStore();
+
+  const prevCoord = useRef({ x: 0, y: 0 });
+
+  const newRect = useRef<Konva.Rect | null>(null);
+
+  const enableAction = useRef(false);
+
+  const { fillRectColor } = useControls('Stage', {
+    fillRectColor: '#ffffff',
+  });
 
   const query = useQuery({
     queryKey: [QUERIES.BACKGROUND_IMAGE],
@@ -30,6 +40,7 @@ export default function App() {
 
   function handleOnWheel(e: KonvaEventObject<WheelEvent>) {
     e.evt.preventDefault();
+
     if (!sceneRef.current || !stageRef.current) return;
     if (!e.evt.ctrlKey) return;
 
@@ -64,11 +75,83 @@ export default function App() {
     setScale(1.0);
   }
 
-  function onPointerDown(e: KonvaEventObject<PointerEvent>) {}
+  function onPointerDown(e: KonvaEventObject<PointerEvent>) {
+    e.target.setPointerCapture(e.evt.pointerId);
 
-  function onPointerUp(e: KonvaEventObject<PointerEvent>) {}
+    const pointerPosition = e.target.getStage()!.getPointerPosition()!;
 
-  function onPointerMove(e: KonvaEventObject<PointerEvent>) {}
+    prevCoord.current = pointerPosition;
+    enableAction.current = true;
+
+    if (action.active === 'rect') {
+      newRect.current = new Konva.Rect({
+        width: 0,
+        height: 0,
+        x: pointerPosition.x,
+        y: pointerPosition.y,
+        fill: fillRectColor,
+      });
+      sceneRef.current?.add(newRect.current);
+    }
+  }
+
+  function onPointerUp() {
+    if (action.active === 'rect') {
+      if (newRect.current) {
+        newRect.current?.remove();
+
+        world.pop();
+
+        setWorld([
+          ...world,
+          {
+            key: (Date.now() * Math.random()).toString(),
+            x: newRect.current.x(),
+            y: newRect.current.y(),
+            width: newRect.current.width(),
+            height: newRect.current.height(),
+          },
+        ]);
+
+        newRect.current = null;
+      }
+    }
+
+    enableAction.current = false;
+    setAction({ ...action, active: 'cursor' });
+  }
+
+  function onPointerMove(e: KonvaEventObject<PointerEvent>) {
+    if (!enableAction.current) return;
+
+    if (action.active === 'rect') {
+      createRect(e);
+    }
+  }
+
+  function createRect(e: KonvaEventObject<PointerEvent>) {
+    const stage = e.target.getStage();
+    if (!stage) return;
+
+    const coord = stage.getPointerPosition()!;
+
+    const size = {
+      width: prevCoord.current.x - coord.x,
+      height: prevCoord.current.y - coord.y,
+    };
+
+    if (newRect.current) {
+      newRect.current.width(Math.abs(size.width));
+      newRect.current.height(Math.abs(size.height));
+
+      if (size.width > 0) {
+        newRect.current.x(prevCoord.current.x - size.width);
+      }
+      if (size.height > 0) {
+        newRect.current.y(prevCoord.current.y - size.height);
+      }
+    }
+  }
 
   useEffect(() => {
     window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
@@ -96,6 +179,9 @@ export default function App() {
         width={window.innerWidth}
         height={window.innerHeight}
         onWheel={handleOnWheel}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        onPointerMove={onPointerMove}
       >
         <Layer>
           {!query.isFetching && (
@@ -113,9 +199,9 @@ export default function App() {
           )}
         </Layer>
         <Layer ref={sceneRef}>
-          {world.map((value, index) => {
-            return <GroupBase {...value} key={index.toString()} />;
-          })}
+          {world.map((value) => (
+            <GroupBase {...value} key={value.key} />
+          ))}
         </Layer>
         <Layer></Layer>
       </Stage>
