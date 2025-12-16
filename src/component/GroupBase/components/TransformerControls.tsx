@@ -121,6 +121,8 @@ export default function TransformerControls(props: TransformerControls) {
     amount.x /= scale;
     amount.y /= scale;
 
+    if (e.evt.shiftKey) amount.y = amount.x;
+
     prevCoord.current = {
       x: coord.x,
       y: coord.y,
