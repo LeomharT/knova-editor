@@ -1,15 +1,18 @@
+import { Card, ColorPicker, Flex, Space, Typography } from 'antd';
 import Konva from 'konva';
 import type { GroupConfig } from 'konva/lib/Group';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Image, Rect, Text } from 'react-konva';
+import { Html } from 'react-konva-utils';
 import { useBearStore } from '../../hooks/useBearStore';
 import type { World } from '../../types/world';
 import Outline from '../Outline';
 import SizeTooltip from './components/SizeTooltip';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
+import classes from './style.module.css';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
 
 type GroupBaseProps = GroupConfig & World;
@@ -162,6 +165,22 @@ export default function GroupBase(props: GroupBaseProps) {
 
   return (
     <Group id={id}>
+      <Html>
+        <div className={classes.panel}>
+          <Card classNames={{ root: classes.root, body: classes.body }} title={id}>
+            <Flex vertical>
+              <Typography.Text strong>Property</Typography.Text>
+              <Space vertical>
+                <Typography.Text strong>Background</Typography.Text>
+                <ColorPicker
+                  defaultValue={props.fill}
+                  onChange={(e) => set({ fillRectColor: `#${e.toHex()}` })}
+                />
+              </Space>
+            </Flex>
+          </Card>
+        </div>
+      </Html>
       <Group
         ref={ref}
         draggable={action.active === 'cursor'}
