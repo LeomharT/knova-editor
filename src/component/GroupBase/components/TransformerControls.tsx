@@ -43,6 +43,12 @@ export default function TransformerControls(props: TransformerControls) {
     y: 0,
   });
 
+  const rotation = useRef({
+    pointerAngle: 0,
+    prevRotate: 0,
+    currRotate: 0,
+  });
+
   const { debugControls } = useControls('TransformerControls', {
     debugControls: false,
   });
@@ -78,15 +84,14 @@ export default function TransformerControls(props: TransformerControls) {
   }
 
   function onResizeStart(e: KonvaEventObject<PointerEvent>) {
+    const stage = e.target.getStage()!;
+
     enableResize.current = true;
 
     const canvas = e.target;
     canvas.setPointerCapture(e.evt.pointerId);
 
-    prevCoord.current = {
-      x: e.evt.clientX,
-      y: e.evt.clientY,
-    };
+    prevCoord.current = stage.getPointerPosition()!;
   }
 
   function onResizeEnd() {
@@ -147,28 +152,35 @@ export default function TransformerControls(props: TransformerControls) {
   }
 
   function onRotateStart(e: KonvaEventObject<PointerEvent>) {
+    const stage = e.target.getStage()!;
+
     enableRotate.current = true;
 
     const canvas = e.target;
     canvas.setPointerCapture(e.evt.pointerId);
+
+    const coord = stage.getPointerPosition()!;
+
+    const center = {
+      x: props.absolutePosition.x + props.size.width / 2.0,
+      y: props.absolutePosition.y + props.size.height / 2.0,
+    };
+
+    rotation.current.pointerAngle =
+      Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
   }
 
   function onRotateEnd() {
     enableRotate.current = false;
     props.onRotateEnd?.call({});
+
+    rotation.current.prevRotate = rotation.current.currRotate;
   }
 
-  function rotateRect(e: KonvaEventObject<PointerEvent>, position: keyof typeof CORNERS) {
+  function rotateRect(e: KonvaEventObject<PointerEvent>) {
     const stage = e.target.getStage();
 
     if (!enableRotate.current || !stage) return;
-
-    const corner = {
-      TOP_LEFT: 90 + 45,
-      TOP_RIGHT: 45,
-      BOTTOM_RIGHT: -45,
-      BOTTOM_LEFT: -90 - 45,
-    };
 
     const coord = stage.getPointerPosition()!;
 
@@ -178,8 +190,11 @@ export default function TransformerControls(props: TransformerControls) {
     };
 
     const angle = Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
+    const rotateAngle = rotation.current.pointerAngle - angle;
 
-    props.onRotate?.call({}, angle + corner[position]);
+    rotation.current.currRotate = rotation.current.prevRotate + rotateAngle;
+
+    props.onRotate?.call({}, -rotation.current.currRotate);
   }
 
   useEffect(() => {
@@ -250,7 +265,7 @@ export default function TransformerControls(props: TransformerControls) {
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
           onPointerUp={onRotateEnd}
-          onPointerMove={(e) => rotateRect(e, 'TOP_LEFT')}
+          onPointerMove={rotateRect}
         />
         <Rect
           name='TopLeftCtl_Scale'
@@ -283,7 +298,7 @@ export default function TransformerControls(props: TransformerControls) {
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
           onPointerUp={onRotateEnd}
-          onPointerMove={(e) => rotateRect(e, 'TOP_RIGHT')}
+          onPointerMove={rotateRect}
         />
         <Rect
           name='TopRightCtl_Scale'
@@ -316,7 +331,7 @@ export default function TransformerControls(props: TransformerControls) {
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
           onPointerUp={onRotateEnd}
-          onPointerMove={(e) => rotateRect(e, 'BOTTOM_RIGHT')}
+          onPointerMove={rotateRect}
         />
         <Rect
           name='BottomRightCtl_Scale'
@@ -349,7 +364,7 @@ export default function TransformerControls(props: TransformerControls) {
           onPointerLeave={leaveControl}
           onPointerDown={onRotateStart}
           onPointerUp={onRotateEnd}
-          onPointerMove={(e) => rotateRect(e, 'BOTTOM_LEFT')}
+          onPointerMove={rotateRect}
         />
         <Rect
           name='BottomLeftCtl_Scale'
