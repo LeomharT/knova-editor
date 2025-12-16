@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { World } from '../types/world';
 
+type SetStoreState<S> = (value: S | ((prevState: S) => S)) => void;
+
 export type BearStore = {
   /** Selected ids */
   selected: string[];
@@ -13,7 +15,7 @@ export type BearStore = {
   };
   setAction: (value: { locked: boolean; active: string }) => void;
   world: World[];
-  setWorld: (value: World[]) => void;
+  setWorld: SetStoreState<World[]>;
 };
 
 export const useBearStore = create<BearStore>((set) => {
@@ -36,6 +38,13 @@ export const useBearStore = create<BearStore>((set) => {
         height: 200,
       },
     ],
-    setWorld: (world) => set((state) => ({ ...state, world })),
+    setWorld: (world: World[] | ((prev: World[]) => World[])) => {
+      if (typeof world === 'function') {
+        set((state) => ({ ...state, world: world(state.world) }));
+      }
+      if (typeof world === 'object') {
+        set((state) => ({ ...state, world: world as World[] }));
+      }
+    },
   };
 });

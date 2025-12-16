@@ -158,6 +158,15 @@ export default function App() {
     }
   }
 
+  function handleOnKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Delete') {
+      setWorld((prev) => {
+        prev.pop();
+        return prev;
+      });
+    }
+  }
+
   useEffect(() => {
     window.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
   }, []);
@@ -172,6 +181,10 @@ export default function App() {
       rectRef.current?.fillPatternScale({ x: 1, y: 1 });
       rectRef.current?.getLayer()?.batchDraw();
     });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleOnKeyDown);
   }, []);
 
   return (
