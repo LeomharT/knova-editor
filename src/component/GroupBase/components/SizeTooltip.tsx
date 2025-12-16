@@ -38,18 +38,13 @@ export default function SizeTooltip(props: SizeTooltipProps) {
 
   useEffect(() => {
     if (ref.current) {
-      const center = {
-        x: props.position.x + props.size.width / 2.0,
-        y: props.position.y + props.size.height / 2.0,
-      };
-
       ref.current.offsetX(props.size.width / 2.0);
       ref.current.offsetY(props.size.height / 2.0);
 
       ref.current.rotation(props.rotation);
 
-      ref.current.x(center.x);
-      ref.current.y(center.y);
+      ref.current.x(props.position.x);
+      ref.current.y(props.position.y);
     }
   }, [props.rotation, props.position, props.size]);
 

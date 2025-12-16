@@ -28,13 +28,14 @@ export default function GroupBase(props: GroupBaseProps) {
 
   const [isHover, setHover] = useState(false);
 
-  const [position, setPosition] = useState({ x: props.x, y: props.y });
+  const [position, setPosition] = useState({
+    x: props.x + props.width / 2.0,
+    y: props.y + props.height / 2.0,
+  });
 
   const [size, setSize] = useState({ width: props.width, height: props.height });
 
   const [rotation, setRotation] = useState(0);
-
-  const [displacement, setDisplacement] = useState({ x: 0, y: 0 });
 
   const outlinePoints = [0, 0, size.width, 0, size.width, size.height, 0, size.height, 0, 0];
 
@@ -89,14 +90,7 @@ export default function GroupBase(props: GroupBaseProps) {
   }
 
   function handleOnDragMove(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
-    setPosition({
-      x: e.target.absolutePosition().x - e.target.offsetX(),
-      y: e.target.absolutePosition().y - e.target.offsetY(),
-    });
-    setDisplacement({
-      x: e.target.x() - e.target.offsetX(),
-      y: e.target.y() - e.target.offsetY(),
-    });
+    setPosition(e.target.getAbsolutePosition());
   }
 
   function handleOnDragEnd() {
@@ -122,9 +116,9 @@ export default function GroupBase(props: GroupBaseProps) {
       ref.current.x(ref.current.x() + position.x);
       ref.current.y(ref.current.y() + position.y);
 
-      setDisplacement({
-        x: ref.current.x() - ref.current.offsetX(),
-        y: ref.current.y() - ref.current.offsetY(),
+      setPosition({
+        x: ref.current.x(),
+        y: ref.current.y(),
       });
     }
 
@@ -136,18 +130,7 @@ export default function GroupBase(props: GroupBaseProps) {
     set({ rotation: angle });
 
     if (ref.current) {
-      const center = {
-        x: displacement.x + size.width / 2.0,
-        y: displacement.y + size.height / 2.0,
-      };
-
-      ref.current.offsetX(size.width / 2.0);
-      ref.current.offsetY(size.height / 2.0);
-
       ref.current.rotation(angle);
-
-      ref.current.x(center.x);
-      ref.current.y(center.y);
     }
   }
 
@@ -178,12 +161,16 @@ export default function GroupBase(props: GroupBaseProps) {
   }, [setSelected, id]);
 
   return (
-    <Group id={id} {...props}>
+    <Group id={id}>
       <Group
         ref={ref}
         draggable={action.active === 'cursor'}
+        x={position.x}
+        y={position.y}
         width={size.width}
         height={size.height}
+        offsetX={size.width / 2.0}
+        offsetY={size.height / 2.0}
         onDragEnd={handleOnDragEnd}
         onDragMove={handleOnDragMove}
         onPointerEnter={handleOnPointerEnter}
@@ -197,8 +184,7 @@ export default function GroupBase(props: GroupBaseProps) {
       </Group>
       <TransformerControls
         size={size}
-        position={displacement}
-        absolutePosition={position}
+        position={position}
         rotation={rotation}
         points={outlinePoints}
         visible={isSelected}
@@ -206,7 +192,7 @@ export default function GroupBase(props: GroupBaseProps) {
         onRotate={handleOnRotate}
         onUpdatePosition={handleOnUpdatePosition}
       />
-      <SizeTooltip position={displacement} rotation={rotation} size={size} visible={isSelected} />
+      <SizeTooltip position={position} rotation={rotation} size={size} visible={isSelected} />
     </Group>
   );
 }

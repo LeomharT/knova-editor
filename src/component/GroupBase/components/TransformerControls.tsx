@@ -10,7 +10,6 @@ import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 type TransformerControls = {
   size: GroupBaseSize;
   position: GroupBasePosition;
-  absolutePosition: GroupBasePosition;
   points: number[];
   rotation: number;
   visible?: boolean;
@@ -105,9 +104,9 @@ export default function TransformerControls(props: TransformerControls) {
 
     const corner = {
       TOP_LEFT: { x: 1, y: 1, up: -1, left: -1 },
-      TOP_RIGHT: { x: 0, y: 1, up: -1, left: 1 },
-      BOTTOM_RIGHT: { x: 0, y: 0, up: 1, left: 1 },
-      BOTTOM_LEFT: { x: 1, y: 0, up: 1, left: -1 },
+      TOP_RIGHT: { x: -1, y: 1, up: -1, left: 1 },
+      BOTTOM_RIGHT: { x: -1, y: -1, up: 1, left: 1 },
+      BOTTOM_LEFT: { x: 1, y: -1, up: 1, left: -1 },
     };
 
     const coord = {
@@ -138,11 +137,13 @@ export default function TransformerControls(props: TransformerControls) {
 
     props.onResize?.(newSize);
 
-    const localOffsetX = corner[position].x === 1 ? localDx : 0;
-    const localOffsetY = corner[position].y === 1 ? localDy : 0;
+    // const localOffsetX = corner[position].x === 1 ? localDx : 0;
+    // const localOffsetY = corner[position].y === 1 ? localDy : 0;
+    const moveLocalX = ((localDx * corner[position].left) / 2) * corner[position].x * -1;
+    const moveLocalY = ((localDy * corner[position].up) / 2) * corner[position].y * -1;
 
-    const globalDX = localOffsetX * Math.cos(rad) - localOffsetY * Math.sin(rad);
-    const globalDY = localOffsetX * Math.sin(rad) + localOffsetY * Math.cos(rad);
+    const globalDX = moveLocalX * Math.cos(rad) - moveLocalY * Math.sin(rad);
+    const globalDY = moveLocalX * Math.sin(rad) + moveLocalY * Math.cos(rad);
 
     const newPosition = {
       x: globalDX,
@@ -163,8 +164,8 @@ export default function TransformerControls(props: TransformerControls) {
     const coord = stage.getPointerPosition()!;
 
     const center = {
-      x: props.absolutePosition.x + props.size.width / 2.0,
-      y: props.absolutePosition.y + props.size.height / 2.0,
+      x: props.position.x + props.size.width / 2.0,
+      y: props.position.y + props.size.height / 2.0,
     };
 
     rotation.current.pointerAngle =
@@ -186,8 +187,8 @@ export default function TransformerControls(props: TransformerControls) {
     const coord = stage.getPointerPosition()!;
 
     const center = {
-      x: props.absolutePosition.x + props.size.width / 2.0,
-      y: props.absolutePosition.y + props.size.height / 2.0,
+      x: props.position.x + props.size.width / 2.0,
+      y: props.position.y + props.size.height / 2.0,
     };
 
     const angle = Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
@@ -200,18 +201,13 @@ export default function TransformerControls(props: TransformerControls) {
 
   useEffect(() => {
     if (ref.current) {
-      const center = {
-        x: props.position.x + props.size.width / 2.0,
-        y: props.position.y + props.size.height / 2.0,
-      };
-
       ref.current.offsetX(props.size.width / 2.0);
       ref.current.offsetY(props.size.height / 2.0);
 
       ref.current.rotation(props.rotation);
 
-      ref.current.x(center.x);
-      ref.current.y(center.y);
+      ref.current.x(props.position.x);
+      ref.current.y(props.position.y);
     }
   }, [props.rotation, props.position, props.size]);
 
