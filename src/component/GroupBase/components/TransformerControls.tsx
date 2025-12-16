@@ -138,9 +138,15 @@ export default function TransformerControls(props: TransformerControls) {
 
     props.onResize?.(newSize);
 
+    const localOffsetX = corner[position].x === 1 ? localDx : 0;
+    const localOffsetY = corner[position].y === 1 ? localDy : 0;
+
+    const globalDX = localOffsetX * Math.cos(rad) - localOffsetY * Math.sin(rad);
+    const globalDY = localOffsetX * Math.sin(rad) + localOffsetY * Math.cos(rad);
+
     const newPosition = {
-      x: amount.x * corner[position].x,
-      y: amount.y * corner[position].y,
+      x: globalDX,
+      y: globalDY,
     };
 
     props.onUpdatePosition?.(newPosition);
