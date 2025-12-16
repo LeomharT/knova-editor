@@ -163,10 +163,7 @@ export default function TransformerControls(props: TransformerControls) {
 
     const coord = stage.getPointerPosition()!;
 
-    const center = {
-      x: props.position.x + props.size.width / 2.0,
-      y: props.position.y + props.size.height / 2.0,
-    };
+    const center = props.position;
 
     rotation.current.pointerAngle =
       Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
@@ -186,10 +183,7 @@ export default function TransformerControls(props: TransformerControls) {
 
     const coord = stage.getPointerPosition()!;
 
-    const center = {
-      x: props.position.x + props.size.width / 2.0,
-      y: props.position.y + props.size.height / 2.0,
-    };
+    const center = props.position;
 
     const angle = Math.atan2(coord.y - center.y, coord.x - center.x) * (180 / Math.PI);
     const rotateAngle = rotation.current.pointerAngle - angle;
