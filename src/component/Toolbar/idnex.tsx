@@ -1,4 +1,4 @@
-import { IconLocation, IconLock, IconRoute, IconSquare } from '@tabler/icons-react';
+import { IconArrowNarrowRight, IconLocation, IconLock, IconSquare } from '@tabler/icons-react';
 import { Button, Card, Divider, Space, Tooltip } from 'antd';
 import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
@@ -20,7 +20,7 @@ export default function Toolbar() {
     {
       key: 'connect',
       tooltip: 'Connect',
-      icon: <IconRoute />,
+      icon: <IconArrowNarrowRight size={32} style={{ transform: 'translateY(1px)' }} />,
     },
   ];
 

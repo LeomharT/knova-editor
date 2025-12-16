@@ -1,4 +1,4 @@
-import { Card, ColorPicker, Flex, Space, Typography } from 'antd';
+import { Card, ColorPicker, Flex, Input, Space, Typography } from 'antd';
 import Konva from 'konva';
 import type { GroupConfig } from 'konva/lib/Group';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
@@ -168,11 +168,15 @@ export default function GroupBase(props: GroupBaseProps) {
       <Html>
         <div className={classes.panel}>
           <Card classNames={{ root: classes.root, body: classes.body }} title={id}>
-            <Flex vertical>
-              <Typography.Text strong>Property</Typography.Text>
+            <Flex vertical gap={8}>
+              <Space vertical>
+                <Typography.Text strong>Property</Typography.Text>
+                <Input defaultValue={id} />
+              </Space>
               <Space vertical>
                 <Typography.Text strong>Background</Typography.Text>
                 <ColorPicker
+                  showText
                   defaultValue={props.fill}
                   onChange={(e) => set({ fillRectColor: `#${e.toHex()}` })}
                 />
