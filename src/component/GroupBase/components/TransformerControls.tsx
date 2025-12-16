@@ -45,7 +45,7 @@ export default function TransformerControls(props: TransformerControls) {
 
   const rotation = useRef({
     pointerAngle: 0,
-    prevRotate: 0,
+    prevRotate: props.rotation,
     currRotate: 0,
   });
 
@@ -127,28 +127,23 @@ export default function TransformerControls(props: TransformerControls) {
       y: coord.y,
     };
 
+    const rad = props.rotation * (Math.PI / 180);
+    const localDx = amount.x * Math.cos(rad) + amount.y * Math.sin(rad);
+    const localDy = -amount.x * Math.sin(rad) + amount.y * Math.cos(rad);
+
     const newSize = {
-      width: props.size.width + amount.x * corner[position].left,
-      height: props.size.height + amount.y * corner[position].up,
+      width: props.size.width + localDx * corner[position].left,
+      height: props.size.height + localDy * corner[position].up,
     };
 
-    props.onResize?.call({}, newSize);
+    props.onResize?.(newSize);
 
-    const newPosition = { x: 0, y: 0 };
+    const newPosition = {
+      x: amount.x * corner[position].x,
+      y: amount.y * corner[position].y,
+    };
 
-    newPosition.x = props.size.width + amount.x * corner[position].left;
-    newPosition.x *= corner[position].x;
-
-    newPosition.y = props.size.height + amount.y * corner[position].up;
-    newPosition.y *= corner[position].y;
-
-    props.onUpdatePosition?.call(
-      {},
-      {
-        x: amount.x * corner[position].x,
-        y: amount.y * corner[position].y,
-      }
-    );
+    props.onUpdatePosition?.(newPosition);
   }
 
   function onRotateStart(e: KonvaEventObject<PointerEvent>) {
@@ -215,13 +210,7 @@ export default function TransformerControls(props: TransformerControls) {
   }, [props.rotation, props.position, props.size]);
 
   return (
-    <Group
-      ref={ref}
-      name='TransformerControls'
-      x={props.position.x}
-      y={props.position.y}
-      visible={props.visible}
-    >
+    <Group ref={ref} name='TransformerControls' visible={props.visible}>
       <Line
         name='TopLine'
         closed={false}
