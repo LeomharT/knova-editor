@@ -24,7 +24,7 @@ export default function GroupBase(props: GroupBaseProps) {
   const textRef = useRef(null);
   const textRect = useRef(null);
 
-  const { selected, setSelected, action } = useBearStore();
+  const { selected, action, scale, setSelected } = useBearStore();
 
   const [isHover, setHover] = useState(false);
 
@@ -184,7 +184,7 @@ export default function GroupBase(props: GroupBaseProps) {
         onPointerLeave={handleOnPointerLeave}
         onPointerClick={handleOnSelect}
       >
-        <Outline size={size} strokeWidth={4} stroke={PRIMARY_COLOR} visible={isHover} />
+        <Outline size={size} strokeWidth={4 / scale} stroke={PRIMARY_COLOR} visible={isHover} />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
         <Image ref={coverRef} image={undefined} width={size.width} height={size.height} />
         <Text text={id}></Text>

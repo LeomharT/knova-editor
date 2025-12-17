@@ -99,7 +99,6 @@ export default function App() {
     e.target.setPointerCapture(e.evt.pointerId);
 
     const pointerPosition = e.target.getStage()!.getPointerPosition()!;
-    console.log(pointerPosition);
 
     prevCoord.current = pointerPosition;
     prevCoord.current.x -= sceneRef.current?.x() ?? 0;

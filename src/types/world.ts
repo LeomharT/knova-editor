@@ -1,3 +1,8 @@
+export const ShapeType = {
+  RECT: 'RECT',
+  ARROW: 'ARROW',
+};
+
 export interface World {
   key: string;
   x: number;
