@@ -82,7 +82,7 @@ export default function App() {
     let newScale = direction > 0 ? oldScale + 0.1 : oldScale - 0.1;
     newScale = Number(newScale.toFixed(1));
 
-    if (newScale < 0.5 || newScale > 2.0) return;
+    if (newScale < 0.5 || newScale > 5.0) return;
 
     sceneRef.current.scale({ x: newScale, y: newScale });
     setScale(newScale);

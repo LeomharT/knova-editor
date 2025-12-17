@@ -1,6 +1,7 @@
 import type Konva from 'konva';
 import { useEffect, useRef } from 'react';
 import { Group, Rect, Text } from 'react-konva';
+import { useBearStore } from '../../../hooks/useBearStore';
 import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
@@ -14,6 +15,8 @@ export type SizeTooltipProps = {
 };
 
 export default function SizeTooltip(props: SizeTooltipProps) {
+  const { scale } = useBearStore();
+
   const ref = useRef<Konva.Group>(null);
 
   const rectRef = useRef<Konva.Rect>(null);
@@ -32,11 +35,11 @@ export default function SizeTooltip(props: SizeTooltipProps) {
 
       textRef.current.x(textPosition.x);
 
-      rectRef.current.width(textSize.width + 8);
-      rectRef.current.height(textSize.height + 8);
+      rectRef.current.width(textSize.width + 8 / scale);
+      rectRef.current.height(textSize.height + 8 / scale);
       rectRef.current.x(textPosition.x);
     }
-  }, [props.size, props.position]);
+  }, [props.size, props.position, scale]);
 
   useEffect(() => {
     if (ref.current) {
@@ -52,13 +55,17 @@ export default function SizeTooltip(props: SizeTooltipProps) {
 
   return (
     <Group ref={ref}>
-      <Group x={0} y={props.size.height + (props.top ?? 0)} visible={props.visible}>
-        <Rect ref={rectRef} fill={PRIMARY_COLOR} cornerRadius={[4, 4, 4, 4]} />
+      <Group x={0} y={props.size.height + (props.top ?? 0) / scale} visible={props.visible}>
+        <Rect
+          ref={rectRef}
+          fill={PRIMARY_COLOR}
+          cornerRadius={[4 / scale, 4 / scale, 4 / scale, 4 / scale]}
+        />
         <Text
           ref={textRef}
-          padding={4}
-          height={14}
-          fontSize={12}
+          padding={4 / scale}
+          height={14 / scale}
+          fontSize={12 / scale}
           align='center'
           fill='#ffffff'
           text={props.text}
