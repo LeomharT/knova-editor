@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import { getBackgroundImage } from '../api/stage';
 import GroupBase from '../component/GroupBase';
-import Toolbar from '../component/Toolbar/idnex';
+import Toolbar from '../component/Toolbar';
 import ZoomControl from '../component/ZoomControl';
 import { QUERIES } from '../constants/queries';
 import { useBearStore } from '../hooks/useBearStore';
@@ -31,7 +31,7 @@ export default function App() {
 
   const enableAction = useRef(false);
 
-  const { fillRectColor, lineFill, lineStroke, lineType } = useControls('Stage', {
+  const { fillRectColor, lineFill, lineStroke, lineType, lineArrow } = useControls('Stage', {
     Rect: folder({
       fillRectColor: '#ffffff',
     }),
@@ -42,6 +42,12 @@ export default function App() {
         options: {
           Solid: 'Solid',
           Dashed: 'Dashed',
+        },
+      },
+      lineArrow: {
+        options: {
+          Enabled: 'Enabled',
+          Disabled: 'Disabled',
         },
       },
     }),
@@ -111,11 +117,16 @@ export default function App() {
     if (action.active === 'arrow') {
       newArrow.current = new Konva.Arrow({
         points: [pointerPosition.x, pointerPosition.y, pointerPosition.x, pointerPosition.y],
-        fill: lineFill,
         stroke: lineStroke,
+        fill: lineFill,
         dashEnabled: lineType === 'Dashed',
         dash: [5, 5],
         dashOffset: 0,
+        draggable: true,
+        pointerLength: 10,
+        pointerWidth: 10,
+        pointerAtEnding: lineArrow === 'Enabled',
+        pointerAtBeginning: false,
       });
 
       sceneRef.current?.add(newArrow.current);
