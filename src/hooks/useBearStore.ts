@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { World } from '../types/world';
+import { Shapes, type World } from '../types/world';
 
 type SetStoreState<S> = (value: S | ((prevState: S) => S)) => void;
 
@@ -36,6 +36,7 @@ export const useBearStore = create<BearStore>((set) => {
         y: window.innerHeight / 2.0,
         width: 200,
         height: 200,
+        shape: Shapes.RECT,
       },
     ],
     setWorld: (world: World[] | ((prev: World[]) => World[])) => {

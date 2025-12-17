@@ -6,11 +6,13 @@ import { folder, Leva, useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import { getBackgroundImage } from '../api/stage';
+import Connector from '../component/Connector';
 import GroupBase from '../component/GroupBase';
 import Toolbar from '../component/Toolbar';
 import ZoomControl from '../component/ZoomControl';
 import { QUERIES } from '../constants/queries';
 import { useBearStore } from '../hooks/useBearStore';
+import { Shapes, type ShapeArrow, type ShapeRect } from '../types/world';
 
 export default function App() {
   const stageRef = useRef<Konva.Stage>(null);
@@ -96,9 +98,11 @@ export default function App() {
   }
 
   function onPointerDown(e: KonvaEventObject<PointerEvent>) {
-    e.target.setPointerCapture(e.evt.pointerId);
+    if (action.active === 'rect') e.target.setPointerCapture(e.evt.pointerId);
 
-    const pointerPosition = e.target.getStage()!.getPointerPosition()!;
+    const stage = e.target.getStage()!;
+
+    const pointerPosition = stage.getPointerPosition()!;
 
     prevCoord.current = pointerPosition;
     prevCoord.current.x -= sceneRef.current?.x() ?? 0;
@@ -120,6 +124,8 @@ export default function App() {
     }
 
     if (action.active === 'arrow') {
+      const fromNode = sceneRef?.current?.getIntersection(prevCoord.current);
+
       newArrow.current = new Konva.Arrow({
         points: [
           prevCoord.current.x,
@@ -137,13 +143,17 @@ export default function App() {
         pointerWidth: 10,
         pointerAtEnding: lineArrow === 'Enabled',
         pointerAtBeginning: false,
+        listening: false,
       });
+      newArrow.current.setAttr('fromNode', fromNode?.parent);
 
       sceneRef.current?.add(newArrow.current);
     }
   }
 
-  function onPointerUp() {
+  function onPointerUp(e: KonvaEventObject<PointerEvent>) {
+    const stage = e.target.getStage()!;
+
     if (action.active === 'rect' && newRect.current) {
       newRect.current.remove();
 
@@ -151,19 +161,48 @@ export default function App() {
         ...world,
         {
           key: (Date.now() * Math.random()).toString(),
+          shape: Shapes.RECT,
           x: newRect.current.x(),
           y: newRect.current.y(),
           width: newRect.current.width(),
           height: newRect.current.height(),
           fill: fillRectColor,
-        },
+        } as ShapeRect,
       ]);
 
       newRect.current = null;
     }
 
     if (action.active === 'arrow') {
-      // newArrow.current?.remove();
+      newArrow.current?.remove();
+
+      const points = newArrow.current?.points();
+      const fromNode = newArrow.current?.getAttr('fromNode');
+      const toNode = sceneRef.current?.getIntersection(stage.getPointerPosition()!);
+
+      setWorld((prev) => [
+        ...prev,
+        {
+          key: (Date.now() * Math.random()).toString(),
+          shape: Shapes.ARROW,
+          points,
+          node: newArrow.current,
+          fromNode,
+          toNode: toNode?.parent,
+          fill: newArrow.current?.fill(),
+          stroke: newArrow.current?.stroke(),
+          dashEnabled: newArrow.current?.dashEnabled(),
+          dash: newArrow.current?.dash(),
+          dashOffset: newArrow.current?.dashOffset(),
+          draggable: newArrow.current?.draggable(),
+          pointerLength: newArrow.current?.pointerLength(),
+          pointerWidth: newArrow.current?.pointerWidth(),
+          pointerAtEnding: newArrow.current?.pointerAtEnding(),
+          pointerAtBeginning: newArrow.current?.pointerAtBeginning(),
+          listening: newArrow.current?.listening(),
+        } as ShapeArrow,
+      ]);
+
       newArrow.current = null;
     }
 
@@ -295,9 +334,10 @@ export default function App() {
           )}
         </Layer>
         <Layer ref={sceneRef}>
-          {world.map((value) => (
-            <GroupBase {...value} key={value.key} />
-          ))}
+          {world.map((value) => {
+            if (value.shape === Shapes.RECT) return <GroupBase {...value} key={value.key} />;
+            if (value.shape === Shapes.ARROW) return <Connector {...value} key={value.key} />;
+          })}
         </Layer>
         <Layer></Layer>
       </Stage>

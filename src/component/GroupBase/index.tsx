@@ -5,14 +5,14 @@ import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Group, Image, Rect, Text } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
-import type { World } from '../../types/world';
+import { Shapes, type ShapeRect } from '../../types/world';
 import Outline from '../Outline';
 import SizeTooltip from './components/SizeTooltip';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
 
-type GroupBaseProps = GroupConfig & World;
+type GroupBaseProps = GroupConfig & ShapeRect;
 
 export default function GroupBase(props: GroupBaseProps) {
   const id = useId();
@@ -24,7 +24,7 @@ export default function GroupBase(props: GroupBaseProps) {
   const textRef = useRef(null);
   const textRect = useRef(null);
 
-  const { selected, action, scale, setSelected } = useBearStore();
+  const { world, selected, action, scale, setSelected } = useBearStore();
 
   const [isHover, setHover] = useState(false);
 
@@ -98,6 +98,29 @@ export default function GroupBase(props: GroupBaseProps) {
       x: e.target.x(),
       y: e.target.y(),
     });
+
+    const connectors = world.filter((item) => item.shape === Shapes.ARROW);
+
+    for (const c of connectors) {
+      console.log(c.fromNode?._id, c.toNode?._id);
+      console.log(c.fromNode?.id() === ref.current?.id());
+      console.log(c.toNode?.id() === ref.current?.id());
+
+      if (c.fromNode?._id === ref.current?._id) {
+        const points = c.node.points();
+        points[0] = e.target.x();
+        points[1] = e.target.y();
+
+        c.node.points(points);
+      }
+      if (c.toNode?._id === ref.current?._id) {
+        const points = c.node.points();
+        points[2] = e.target.x();
+        points[3] = e.target.y();
+
+        c.node.points(points);
+      }
+    }
   }
 
   function handleOnDragEnd() {
