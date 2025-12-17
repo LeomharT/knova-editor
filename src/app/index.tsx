@@ -168,7 +168,10 @@ export default function App() {
     }
 
     enableAction.current = false;
-    setAction({ ...action, active: 'cursor' });
+
+    if (!action.locked) {
+      setAction({ ...action, active: 'cursor' });
+    }
   }
 
   function onPointerMove(e: KonvaEventObject<PointerEvent>) {
