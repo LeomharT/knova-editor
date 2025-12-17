@@ -5,10 +5,12 @@ import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
 export type SizeTooltipProps = {
+  text: string;
   position: GroupBasePosition;
   size: GroupBaseSize;
   rotation: number;
   visible?: boolean;
+  top?: number;
 };
 
 export default function SizeTooltip(props: SizeTooltipProps) {
@@ -50,7 +52,7 @@ export default function SizeTooltip(props: SizeTooltipProps) {
 
   return (
     <Group ref={ref}>
-      <Group x={0} y={props.size.height + 5} visible={props.visible}>
+      <Group x={0} y={props.size.height + (props.top ?? 0)} visible={props.visible}>
         <Rect ref={rectRef} fill={PRIMARY_COLOR} cornerRadius={[4, 4, 4, 4]} />
         <Text
           ref={textRef}
@@ -59,7 +61,7 @@ export default function SizeTooltip(props: SizeTooltipProps) {
           fontSize={12}
           align='center'
           fill='#ffffff'
-          text={`${Math.round(props.size.width)} x ${Math.round(props.size.height)}`}
+          text={props.text}
         />
       </Group>
     </Group>

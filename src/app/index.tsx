@@ -37,22 +37,25 @@ export default function App() {
     Rect: folder({
       fillRectColor: '#ffffff',
     }),
-    Arrow: folder({
-      lineFill: '#000000',
-      lineStroke: '#000000',
-      lineType: {
-        options: {
-          Solid: 'Solid',
-          Dashed: 'Dashed',
+    Arrow: folder(
+      {
+        lineFill: '#000000',
+        lineStroke: '#000000',
+        lineType: {
+          options: {
+            Solid: 'Solid',
+            Dashed: 'Dashed',
+          },
+        },
+        lineArrow: {
+          options: {
+            Enabled: 'Enabled',
+            Disabled: 'Disabled',
+          },
         },
       },
-      lineArrow: {
-        options: {
-          Enabled: 'Enabled',
-          Disabled: 'Disabled',
-        },
-      },
-    }),
+      { collapsed: true }
+    ),
   });
 
   const query = useQuery({

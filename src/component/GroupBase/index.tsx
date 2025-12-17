@@ -3,11 +3,11 @@ import type { GroupConfig } from 'konva/lib/Group';
 import type { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { button, folder, useControls } from 'leva';
 import { useEffect, useId, useRef, useState } from 'react';
-import { Group, Image, Rect, Text } from 'react-konva';
+import { Group, Image, Rect } from 'react-konva';
 import { useBearStore } from '../../hooks/useBearStore';
 import { Shapes, type ShapeRect } from '../../types/world';
 import Outline from '../Outline';
-import SizeTooltip from './components/SizeTooltip';
+import Indicator from './components/Indicator';
 import TransformerControls from './components/TransformerControls';
 import { PRIMARY_COLOR } from './config';
 import type { GroupBasePosition, GroupBaseSize } from './tpye';
@@ -51,6 +51,20 @@ export default function GroupBase(props: GroupBaseProps) {
         rotation: {
           label: 'Rotation',
           value: rotation,
+        },
+        ['类型']: {
+          options: {
+            设备: 'Device',
+            链接点: 'Connector',
+          },
+        },
+        ['链接点方向']: {
+          options: {
+            上: 'TOP',
+            下: 'BOTTOM',
+            左: 'LEFT',
+            右: 'RIGHT',
+          },
         },
         ToTop: button(() => {
           const parent = ref.current?.parent;
@@ -102,10 +116,6 @@ export default function GroupBase(props: GroupBaseProps) {
     const connectors = world.filter((item) => item.shape === Shapes.ARROW);
 
     for (const c of connectors) {
-      console.log(c.fromNode?._id, c.toNode?._id);
-      console.log(c.fromNode?.id() === ref.current?.id());
-      console.log(c.toNode?.id() === ref.current?.id());
-
       if (c.fromNode?._id === ref.current?._id) {
         const points = c.node.points();
         points[0] = e.target.x();
@@ -210,7 +220,6 @@ export default function GroupBase(props: GroupBaseProps) {
         <Outline size={size} strokeWidth={4 / scale} stroke={PRIMARY_COLOR} visible={isHover} />
         <Rect width={size.width} height={size.height} fill={fillRectColor} />
         <Image ref={coverRef} image={undefined} width={size.width} height={size.height} />
-        <Text text={id}></Text>
       </Group>
       <TransformerControls
         id={id}
@@ -223,7 +232,22 @@ export default function GroupBase(props: GroupBaseProps) {
         onRotate={handleOnRotate}
         onUpdatePosition={handleOnUpdatePosition}
       />
-      <SizeTooltip position={position} rotation={rotation} size={size} visible={isSelected} />
+      <Indicator
+        text={id}
+        position={position}
+        rotation={rotation}
+        size={size}
+        visible={isSelected}
+        top={5}
+      />
+      <Indicator
+        text={`${Math.round(size.width)} x ${Math.round(size.height)}`}
+        position={position}
+        rotation={rotation}
+        size={size}
+        visible={isSelected}
+        top={30}
+      />
     </Group>
   );
 }
