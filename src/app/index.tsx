@@ -188,6 +188,10 @@ export default function App() {
     if (!stage) return;
 
     const coord = stage.getPointerPosition()!;
+    coord.x -= sceneRef.current?.x() ?? 0;
+    coord.y -= sceneRef.current?.y() ?? 0;
+    coord.x /= scale;
+    coord.y /= scale;
 
     const size = {
       width: prevCoord.current.x - coord.x,
