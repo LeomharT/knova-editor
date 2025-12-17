@@ -8,6 +8,7 @@ import { PRIMARY_COLOR } from '../config';
 import type { GroupBasePosition, GroupBaseSize } from '../tpye';
 
 type TransformerControls = {
+  id: string;
   size: GroupBaseSize;
   position: GroupBasePosition;
   points: number[];
@@ -48,7 +49,7 @@ export default function TransformerControls(props: TransformerControls) {
     currRotate: 0,
   });
 
-  const { debugControls } = useControls('TransformerControls', {
+  const { debugControls } = useControls(props.id, {
     debugControls: false,
   });
 

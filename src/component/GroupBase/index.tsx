@@ -186,6 +186,7 @@ export default function GroupBase(props: GroupBaseProps) {
         <Text text={id}></Text>
       </Group>
       <TransformerControls
+        id={id}
         size={size}
         position={position}
         rotation={rotation}
