@@ -21,7 +21,7 @@ export default function App() {
 
   const setSelect = useBearStore((state) => state.setSelected);
 
-  const { action, world, setScale, setWorld, setAction } = useBearStore();
+  const { action, world, scale, setScale, setWorld, setAction } = useBearStore();
 
   const prevCoord = useRef({ x: 0, y: 0 });
 
@@ -99,16 +99,22 @@ export default function App() {
     e.target.setPointerCapture(e.evt.pointerId);
 
     const pointerPosition = e.target.getStage()!.getPointerPosition()!;
+    console.log(pointerPosition);
 
     prevCoord.current = pointerPosition;
+    prevCoord.current.x -= sceneRef.current?.x() ?? 0;
+    prevCoord.current.y -= sceneRef.current?.y() ?? 0;
+    prevCoord.current.x /= scale;
+    prevCoord.current.y /= scale;
+
     enableAction.current = true;
 
     if (action.active === 'rect') {
       newRect.current = new Konva.Rect({
         width: 0,
         height: 0,
-        x: pointerPosition.x,
-        y: pointerPosition.y,
+        x: prevCoord.current.x,
+        y: prevCoord.current.y,
         fill: fillRectColor,
       });
       sceneRef.current?.add(newRect.current);
@@ -116,7 +122,12 @@ export default function App() {
 
     if (action.active === 'arrow') {
       newArrow.current = new Konva.Arrow({
-        points: [pointerPosition.x, pointerPosition.y, pointerPosition.x, pointerPosition.y],
+        points: [
+          prevCoord.current.x,
+          prevCoord.current.y,
+          prevCoord.current.x,
+          prevCoord.current.y,
+        ],
         stroke: lineStroke,
         fill: lineFill,
         dashEnabled: lineType === 'Dashed',
@@ -202,7 +213,12 @@ export default function App() {
 
   function createArrow(e: KonvaEventObject<PointerEvent>) {
     const stage = e.target.getStage()!;
+
     const coord = stage.getPointerPosition()!;
+    coord.x -= sceneRef.current?.x() ?? 0;
+    coord.y -= sceneRef.current?.y() ?? 0;
+    coord.x /= scale;
+    coord.y /= scale;
 
     if (newArrow.current) {
       const points = newArrow.current.points();
