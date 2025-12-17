@@ -100,8 +100,6 @@ export default function App() {
       if (newRect.current) {
         newRect.current?.remove();
 
-        world.pop();
-
         setWorld([
           ...world,
           {

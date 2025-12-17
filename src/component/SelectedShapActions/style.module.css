@@ -1,0 +1,11 @@
+.root {
+  width: 12.5rem;
+  position: absolute;
+  top: 64px;
+  left: 8px;
+  z-index: 99;
+}
+
+.body {
+  --ant-card-body-padding: 16px;
+}

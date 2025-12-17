@@ -52,6 +52,10 @@ export default function GroupBase(props: GroupBaseProps) {
           label: 'Rotation',
           value: rotation,
         },
+        ToTop: button(() => {
+          const parent = ref.current?.parent;
+          parent?.moveToTop();
+        }),
         Upload: button(() => {
           const input = document.createElement('input');
           input.type = 'file';

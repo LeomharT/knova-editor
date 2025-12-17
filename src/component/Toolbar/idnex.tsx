@@ -1,10 +1,16 @@
-import { IconArrowNarrowRight, IconLocation, IconLock, IconSquare } from '@tabler/icons-react';
+import {
+  IconArrowNarrowRight,
+  IconLocation,
+  IconLock,
+  IconSquare,
+  IconTrash,
+} from '@tabler/icons-react';
 import { Button, Card, Divider, Space, Tooltip } from 'antd';
 import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
 
 export default function Toolbar() {
-  const { action, setAction, setSelected } = useBearStore();
+  const { action, setAction, setSelected, setWorld } = useBearStore();
 
   const actions = [
     {
@@ -20,7 +26,12 @@ export default function Toolbar() {
     {
       key: 'connect',
       tooltip: 'Connect',
-      icon: <IconArrowNarrowRight size={32} style={{ transform: 'translateY(1px)' }} />,
+      icon: (
+        <IconArrowNarrowRight
+          size={32}
+          style={{ transform: 'translateY(1px)', strokeWidth: 1.5 }}
+        />
+      ),
     },
   ];
 
@@ -54,6 +65,16 @@ export default function Toolbar() {
               </Tooltip>
             ))}
           </Space>
+          <Divider vertical />
+          <Tooltip arrow={false} title='Clean scene'>
+            <Button
+              danger
+              type={'text'}
+              size='large'
+              icon={<IconTrash />}
+              onClick={() => setWorld([])}
+            />
+          </Tooltip>
         </Space>
       </Card>
     </div>
