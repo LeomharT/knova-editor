@@ -243,10 +243,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='TopLeftCtl_Rotate'
           fill={debugControls ? 'white' : 'transparent'}
-          x={-16}
-          y={-16}
-          width={16}
-          height={16}
+          x={-16 / scale}
+          y={-16 / scale}
+          width={16 / scale}
+          height={16 / scale}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'TOP_LEFT')}
@@ -258,10 +258,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='TopLeftCtl_Scale'
           fill='white'
-          x={-4.5}
-          y={-4.5}
-          width={8}
-          height={8}
+          x={-4.5 / scale}
+          y={-4.5 / scale}
+          width={8 / scale}
+          height={8 / scale}
           stroke={PRIMARY_COLOR}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'TOP_LEFT')}
@@ -277,9 +277,9 @@ export default function TransformerControls(props: TransformerControls) {
           name='TopRightCtl_Rotate'
           fill={debugControls ? 'white' : 'transparent'}
           x={props.size.width}
-          y={-16}
-          width={16}
-          height={16}
+          y={-16 / scale}
+          width={16 / scale}
+          height={16 / scale}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'TOP_RIGHT')}
@@ -291,10 +291,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='TopRightCtl_Scale'
           fill='white'
-          x={props.size.width - 4.5}
-          y={-4.5}
-          width={8}
-          height={8}
+          x={props.size.width - 4.5 / scale}
+          y={-4.5 / scale}
+          width={8 / scale}
+          height={8 / scale}
           stroke={PRIMARY_COLOR}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'TOP_RIGHT')}
@@ -311,8 +311,8 @@ export default function TransformerControls(props: TransformerControls) {
           fill={debugControls ? 'white' : 'transparent'}
           x={props.size.width}
           y={props.size.height}
-          width={16}
-          height={16}
+          width={16 / scale}
+          height={16 / scale}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_RIGHT')}
@@ -324,10 +324,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='BottomRightCtl_Scale'
           fill='white'
-          x={props.size.width - 4.5}
-          y={props.size.height - 4.5}
-          width={8}
-          height={8}
+          x={props.size.width - 4.5 / scale}
+          y={props.size.height - 4.5 / scale}
+          width={8 / scale}
+          height={8 / scale}
           stroke={PRIMARY_COLOR}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_RIGHT')}
@@ -342,10 +342,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='BottomLeftCtl_Rotate'
           fill={debugControls ? 'white' : 'transparent'}
-          x={-16}
+          x={-16 / scale}
           y={props.size.height}
-          width={16}
-          height={16}
+          width={16 / scale}
+          height={16 / scale}
           stroke={debugControls ? PRIMARY_COLOR : 'transparent'}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterRotate(e, 'BOTTOM_LEFT')}
@@ -357,10 +357,10 @@ export default function TransformerControls(props: TransformerControls) {
         <Rect
           name='BottomLeftCtl_Scale'
           fill='white'
-          x={-4.5}
-          y={props.size.height - 4.5}
-          width={8}
-          height={8}
+          x={-4.5 / scale}
+          y={props.size.height - 4.5 / scale}
+          width={8 / scale}
+          height={8 / scale}
           stroke={PRIMARY_COLOR}
           strokeWidth={LINE_WIDTH}
           onPointerEnter={(e) => enterScale(e, 'BOTTOM_LEFT')}
