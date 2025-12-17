@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { App as AntdApp } from 'antd';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { Leva, useControls } from 'leva';
+import { folder, Leva, useControls } from 'leva';
 import { useEffect, useRef } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import { getBackgroundImage } from '../api/stage';
@@ -25,12 +25,26 @@ export default function App() {
 
   const prevCoord = useRef({ x: 0, y: 0 });
 
-  const newRect = useRef<Konva.Rect | null>(null);
+  const newRect = useRef<Konva.Rect>(null);
+
+  const newArrow = useRef<Konva.Arrow>(null);
 
   const enableAction = useRef(false);
 
-  const { fillRectColor } = useControls('Stage', {
-    fillRectColor: '#ffffff',
+  const { fillRectColor, lineFill, lineStroke, lineType } = useControls('Stage', {
+    Rect: folder({
+      fillRectColor: '#ffffff',
+    }),
+    Arrow: folder({
+      lineFill: '#000000',
+      lineStroke: '#000000',
+      lineType: {
+        options: {
+          Solid: 'Solid',
+          Dashed: 'Dashed',
+        },
+      },
+    }),
   });
 
   const query = useQuery({
@@ -93,27 +107,43 @@ export default function App() {
       });
       sceneRef.current?.add(newRect.current);
     }
+
+    if (action.active === 'arrow') {
+      newArrow.current = new Konva.Arrow({
+        points: [pointerPosition.x, pointerPosition.y, pointerPosition.x, pointerPosition.y],
+        fill: lineFill,
+        stroke: lineStroke,
+        dashEnabled: lineType === 'Dashed',
+        dash: [5, 5],
+        dashOffset: 0,
+      });
+
+      sceneRef.current?.add(newArrow.current);
+    }
   }
 
   function onPointerUp() {
-    if (action.active === 'rect') {
-      if (newRect.current) {
-        newRect.current?.remove();
+    if (action.active === 'rect' && newRect.current) {
+      newRect.current.remove();
 
-        setWorld([
-          ...world,
-          {
-            key: (Date.now() * Math.random()).toString(),
-            x: newRect.current.x(),
-            y: newRect.current.y(),
-            width: newRect.current.width(),
-            height: newRect.current.height(),
-            fill: fillRectColor,
-          },
-        ]);
+      setWorld([
+        ...world,
+        {
+          key: (Date.now() * Math.random()).toString(),
+          x: newRect.current.x(),
+          y: newRect.current.y(),
+          width: newRect.current.width(),
+          height: newRect.current.height(),
+          fill: fillRectColor,
+        },
+      ]);
 
-        newRect.current = null;
-      }
+      newRect.current = null;
+    }
+
+    if (action.active === 'arrow') {
+      // newArrow.current?.remove();
+      newArrow.current = null;
     }
 
     enableAction.current = false;
@@ -125,6 +155,9 @@ export default function App() {
 
     if (action.active === 'rect') {
       createRect(e);
+    }
+    if (action.active === 'arrow') {
+      createArrow(e);
     }
   }
 
@@ -153,6 +186,20 @@ export default function App() {
       if (size.height > 0) {
         newRect.current.y(prevCoord.current.y - size.height);
       }
+    }
+  }
+
+  function createArrow(e: KonvaEventObject<PointerEvent>) {
+    const stage = e.target.getStage()!;
+    const coord = stage.getPointerPosition()!;
+
+    if (newArrow.current) {
+      const points = newArrow.current.points();
+
+      points[points.length - 2] = coord.x;
+      points[points.length - 1] = coord.y;
+
+      newArrow.current.points(points);
     }
   }
 

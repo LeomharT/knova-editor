@@ -5,11 +5,13 @@ import {
   IconSquare,
   IconTrash,
 } from '@tabler/icons-react';
-import { Button, Card, Divider, Space, Tooltip } from 'antd';
+import { App, Button, Card, Divider, Space, Tooltip } from 'antd';
 import { useBearStore } from '../../hooks/useBearStore';
 import classes from './style.module.css';
 
 export default function Toolbar() {
+  const { modal } = App.useApp();
+
   const { action, setAction, setSelected, setWorld } = useBearStore();
 
   const actions = [
@@ -24,8 +26,8 @@ export default function Toolbar() {
       icon: <IconSquare />,
     },
     {
-      key: 'connect',
-      tooltip: 'Connect',
+      key: 'arrow',
+      tooltip: 'Arrow',
       icon: (
         <IconArrowNarrowRight
           size={32}
@@ -38,6 +40,14 @@ export default function Toolbar() {
   function onActionChange(active: string) {
     setAction({ ...action, active });
     setSelected([]);
+  }
+
+  function cleanScene() {
+    modal.confirm({
+      title: 'Delete all shapes?',
+      content: 'Are you sure you want to delete all the shapes from this scene?',
+      onOk: () => setWorld([]),
+    });
   }
 
   return (
@@ -67,13 +77,7 @@ export default function Toolbar() {
           </Space>
           <Divider vertical />
           <Tooltip arrow={false} title='Clean scene'>
-            <Button
-              danger
-              type={'text'}
-              size='large'
-              icon={<IconTrash />}
-              onClick={() => setWorld([])}
-            />
+            <Button danger type={'text'} size='large' icon={<IconTrash />} onClick={cleanScene} />
           </Tooltip>
         </Space>
       </Card>
