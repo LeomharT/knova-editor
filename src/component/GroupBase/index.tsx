@@ -21,9 +21,6 @@ export default function GroupBase(props: GroupBaseProps) {
 
   const coverRef = useRef<Konva.Image>(null);
 
-  const textRef = useRef(null);
-  const textRect = useRef(null);
-
   const { world, selected, action, scale, setSelected } = useBearStore();
 
   const [isHover, setHover] = useState(false);
@@ -147,8 +144,6 @@ export default function GroupBase(props: GroupBaseProps) {
 
   function handleOnResize(size: GroupBaseSize) {
     setSize(size);
-
-    setupTooltip();
   }
 
   function handleOnUpdatePosition(position: GroupBasePosition) {
@@ -161,8 +156,6 @@ export default function GroupBase(props: GroupBaseProps) {
         y: ref.current.y(),
       });
     }
-
-    setupTooltip();
   }
 
   function handleOnRotate(angle: number) {
@@ -173,28 +166,6 @@ export default function GroupBase(props: GroupBaseProps) {
       ref.current.rotation(angle);
     }
   }
-
-  function setupTooltip() {
-    if (textRef.current && textRect.current) {
-      const textSize = {
-        width: (textRef.current as any).textWidth,
-        height: (textRef.current as any).textHeight,
-      };
-      const textPosition = {
-        x: size.width / 2.0 - textSize.width / 2.0,
-      };
-
-      (textRef.current as any).setX(textPosition.x);
-
-      (textRect.current as any).setWidth(textSize.width + 8);
-      (textRect.current as any).setHeight(textSize.height + 8);
-      (textRect.current as any).setX(textPosition.x);
-    }
-  }
-
-  useEffect(() => {
-    setupTooltip();
-  }, []);
 
   useEffect(() => {
     setSelected([id]);
