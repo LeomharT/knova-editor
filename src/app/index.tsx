@@ -35,7 +35,7 @@ export default function App() {
 
   const { fillRectColor, lineFill, lineStroke, lineType, lineArrow } = useControls('Stage', {
     Rect: folder({
-      fillRectColor: '#ffffff',
+      fillRectColor: '#bae0ff',
     }),
     Arrow: folder(
       {
@@ -137,6 +137,7 @@ export default function App() {
           prevCoord.current.y,
         ],
         stroke: lineStroke,
+        strokeWidth: 2,
         fill: lineFill,
         dashEnabled: lineType === 'Dashed',
         dash: [5, 5],

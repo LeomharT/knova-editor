@@ -49,20 +49,6 @@ export default function GroupBase(props: GroupBaseProps) {
           label: 'Rotation',
           value: rotation,
         },
-        ['类型']: {
-          options: {
-            设备: 'Device',
-            链接点: 'Connector',
-          },
-        },
-        ['链接点方向']: {
-          options: {
-            上: 'TOP',
-            下: 'BOTTOM',
-            左: 'LEFT',
-            右: 'RIGHT',
-          },
-        },
         ToTop: button(() => {
           const parent = ref.current?.parent;
           parent?.moveToTop();
@@ -105,29 +91,34 @@ export default function GroupBase(props: GroupBaseProps) {
   }
 
   function handleOnDragMove(e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
-    setPosition({
-      x: e.target.x(),
-      y: e.target.y(),
-    });
+    const distance = {
+      x: position.x - e.target.x(),
+      y: position.y - e.target.y(),
+    };
 
     const connectors = world.filter((item) => item.shape === Shapes.ARROW);
 
     for (const c of connectors) {
+      const points = c.node.points();
+
       if (c.fromNode?._id === ref.current?._id) {
-        const points = c.node.points();
-        points[0] = e.target.x();
-        points[1] = e.target.y();
+        points[0] -= distance.x;
+        points[1] -= distance.y;
 
         c.node.points(points);
       }
       if (c.toNode?._id === ref.current?._id) {
-        const points = c.node.points();
-        points[2] = e.target.x();
-        points[3] = e.target.y();
+        points[2] -= distance.x;
+        points[3] -= distance.y;
 
         c.node.points(points);
       }
     }
+
+    setPosition({
+      x: e.target.x(),
+      y: e.target.y(),
+    });
   }
 
   function handleOnDragEnd() {
